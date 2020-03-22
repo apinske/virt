@@ -176,6 +176,7 @@ init_pm: ; we are now using 32-bit instructions
 begin_pm:
     mov ebx, greeting32
     call print32
+    call 0x12000                 ; kernel
     ret
 
 print32:
@@ -200,7 +201,4 @@ greeting32:
 
 times 510-($-$$) db 0           ; Pad the boot sector out with zeros
 dw 0xaa55                       ; Last two bytes form the magic number for boot sector
-
-times 256 dw 0xdead ; sector 2 = 512 bytes
-times 256 dw 0xbeef ; sector 3 = 512 bytes
 
