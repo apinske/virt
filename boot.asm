@@ -20,7 +20,7 @@
     mov bx, 0x1000
     mov es, bx
     mov bx, 0x2000
-    mov dh, 2
+    mov dh, 9
     ;mov dl, 0                  ; drive (0-based) - set by BIOS
     call disk_load              ; load to [es:bx]=0x12000
 
@@ -177,7 +177,7 @@ begin_pm:
     mov ebx, greeting32
     call print32
     call 0x12000                 ; kernel
-    ret
+    jmp $
 
 print32:
     ;0xb8000 + 2 * (row * 80 + col)
