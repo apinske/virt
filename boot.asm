@@ -4,18 +4,6 @@
 
     mov bx, greeting
     call print
-    mov bx, crlf
-    call print
-
-    mov bx, 0x1234
-    call print_hex
-    mov bx, crlf
-    call print
-
-    mov bx, 0xDADA
-    call print_hex
-    mov bx, crlf
-    call print
 
     mov bx, 0x1000
     mov es, bx
@@ -23,16 +11,6 @@
     mov dh, 9
     ;mov dl, 0                  ; drive (0-based) - set by BIOS
     call disk_load              ; load to [es:bx]=0x12000
-
-    mov bx, [es:0x2000]
-    call print_hex
-    mov bx, crlf
-    call print
-
-    mov bx, [es:0x2000+512]
-    call print_hex
-    mov bx, crlf
-    call print
 
     cli                         ; switch to 32-bit protected mode
     lgdt [gdt_descriptor]
@@ -114,13 +92,10 @@ print_ch:                       ; print char in al
     ret
 
 greeting:
-    db "Hello from real mode!", 0
-
-crlf:
-    db 13, 10, 0
+    db "Hello from real mode.", 0
 
 DISK_ERROR_MSG:
-    db "Disk read error! code=", 0
+    db "Disk read error. code=", 0
 
 gdt_start: ; don't remove the labels, they're needed to compute sizes and jumps
     ; the GDT starts with a null 8-byte
@@ -188,7 +163,7 @@ print32_loop_start:
     mov ah, 0x0f
     cmp al, 0
     je print32_loop_end
-    mov [edx+2080], ax
+    mov [edx+1440], ax
     add ebx, 1
     add edx, 2
     jmp print32_loop_start
@@ -197,7 +172,7 @@ print32_loop_end:
     ret
 
 greeting32:
-    db "Hello from protected mode!", 0
+    db "Hello from protected mode.", 0
 
 times 510-($-$$) db 0           ; Pad the boot sector out with zeros
 dw 0xaa55                       ; Last two bytes form the magic number for boot sector
