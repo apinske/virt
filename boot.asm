@@ -38,7 +38,7 @@ disk_error:
     mov bh, ah ; error http://stanislavs.org/helppc/int_13-1.html
     mov bl, dl ; drive
     call print_hex
-    jmp $
+    hlt
 
 print:                          ; print char* in bx
     pusha
@@ -146,13 +146,13 @@ init_pm: ; we are now using 32-bit instructions
     mov esp, ebp
 
     call begin_pm
-    jmp $
+    hlt
 
 begin_pm:
     mov ebx, greeting32
     call print32
     call 0x12000                 ; kernel
-    jmp $
+    hlt
 
 print32:
     ;0xb8000 + 2 * (row * 80 + col)

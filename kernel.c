@@ -4,7 +4,6 @@ int main() {
     char* vga = (char*)0xb8000;
     print32(vga, "Hello from the kernel.", 10, 1);
 
-    while (1);
     return 0;
 }
 
