@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <Hypervisor/hv.h>
 #include <Hypervisor/hv_vmx.h>
 
@@ -10,6 +11,7 @@ uint64_t read_cs(hv_vcpuid_t, uint32_t);
 void write_cs(hv_vcpuid_t, uint32_t, uint64_t);
 
 void dump_registers(hv_vcpuid_t);
+void dump_vga(char*);
 
 char* hv_return_string(hv_return_t rc) {
     switch (rc) {
@@ -33,7 +35,7 @@ char* hv_return_string(hv_return_t rc) {
     } \
     while (0)
 
-#define MEM_SIZE 1 * 1024 * 1024
+#define MEM_SIZE 2 * 1024 * 1024
 #define MEM_LOC  0x0000
 
 int main(void) {
@@ -116,14 +118,13 @@ int main(void) {
     //VMCS_GUEST(VMX_TIMER_VALUE, 0x00);
 #undef VMCS_GUEST
 
-	FILE *f = fopen("hypervisor.bin", "r");
-	fread((char *)mem + 0x0100, 1, 16 * 1024, f);
-	fclose(f);
+    FILE *f = fopen("boot.img", "r");
+    fread((char *)mem + 0x7c00, 1, 16 * 1024, f);
+    fclose(f);
 
-	write_register(vcpu, HV_X86_RIP, 0x0100);
-	write_register(vcpu, HV_X86_RFLAGS, 0x2);
-	write_register(vcpu, HV_X86_RSP, 0x0);
-
+    write_register(vcpu, HV_X86_RIP, 0x7c00);
+    write_register(vcpu, HV_X86_RFLAGS, 0x2);
+    write_register(vcpu, HV_X86_RSP, 0x0);
 
     bool stop = false;
     for (;;) {
@@ -134,7 +135,23 @@ int main(void) {
         switch (exit_reason) {
         case VMX_REASON_EXC_NMI: {
             uint8_t interrupt_number = read_cs(vcpu, VMCS_RO_IDT_VECTOR_INFO) & 0xFF;
-            printf("INT %x\n", interrupt_number);
+            switch (interrupt_number) {
+            case 0x10: {
+                uint8_t c = read_register(vcpu, HV_X86_RAX) & 0xFF;
+                printf("                                                                                        ");
+                printf("%c |\n", c);
+                break;
+            }
+            case 0x13: {
+                printf("disk load\n");
+                memcpy(mem + 0x12000, mem + 0x7c00 + 512, 5 * 1024);
+                break;
+            }
+            default: {
+                printf("INT %x\n", interrupt_number);
+                dump_registers(vcpu);
+            }
+            }
             write_register(vcpu, HV_X86_RIP, read_register(vcpu, HV_X86_RIP) + 2);
             break;
         }
@@ -148,7 +165,12 @@ int main(void) {
             printf("HLT\n");
             stop = true;
             break;
-        default: 
+        case VMX_REASON_IO:
+            dump_registers(vcpu);
+            printf("IO\n");
+            write_register(vcpu, HV_X86_RIP, read_register(vcpu, HV_X86_RIP) + 2);
+            break;
+        default:
             printf("exit reason: %lld\n", exit_reason);
             stop = true;
             break;
@@ -160,6 +182,7 @@ int main(void) {
 
         if (stop) {
             dump_registers(vcpu);
+            dump_vga(mem + 0xb8000);
             break;
         }
     }
@@ -168,6 +191,15 @@ int main(void) {
     CHECK(hv_vm_unmap(MEM_LOC, MEM_SIZE));
     free(mem);
     CHECK(hv_vm_destroy());
+}
+
+void dump_vga(char* vga) {
+    for (int i = 0; i < 80 * 40 * 2; i += 2) {
+        if (vga[i]) {
+            printf("%c", vga[i]);
+        }
+    }
+    printf("\n");
 }
 
 void dump_registers(hv_vcpuid_t vcpu_id) {

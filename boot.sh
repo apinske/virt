@@ -7,5 +7,8 @@ nasm boot.asm -f bin -o boot.bin
 $CC -ffreestanding -o kernel.o -c kernel.c
 $LD -o kernel.bin -Ttext 0x12000 --oformat binary kernel.o
 cat boot.bin kernel.bin >| boot.img
-qemu-system-i386 -d in_asm boot.img
 
+#qemu-system-i386 boot.img
+
+clang -o hypervisor -framework Hypervisor hypervisor.c 
+./hypervisor
