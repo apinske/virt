@@ -152,7 +152,7 @@ begin_pm:
     mov ebx, greeting32
     call print32
     call 0x12000                 ; kernel
-    hlt
+    ret
 
 print32:
     ;0xb8000 + 2 * (row * 80 + col)
