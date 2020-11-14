@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <Hypervisor/hv.h>
-#include <Hypervisor/hv_vmx.h>
+#include <Hypervisor/Hypervisor.h>
 
 uint64_t read_register(hv_vcpuid_t, hv_x86_reg_t);
 void write_register(hv_vcpuid_t, hv_x86_reg_t, uint64_t);
