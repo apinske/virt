@@ -70,7 +70,7 @@ int main() {
 	    stop = 1;
 	case KVM_EXIT_UNKNOWN:
 	default:
-	    printf("exit %d (%d)\n", run->exit_reason, run->hw.hardware_exit_reason);
+	    printf("exit %d (%lld)\n", run->exit_reason, run->hw.hardware_exit_reason);
 	    stop = 1;
 	}
 	if (stop) {
@@ -107,54 +107,54 @@ void write_register(int vcpu, uint64_t id, uint64_t v) {
 }
 
 void dump_registers(int vcpu) {
-    printf("x00: %16llx x01: %16llx x02: %16llx x03: %16llx\n",
+    printf("x00: %16lx x01: %16lx x02: %16lx x03: %16lx\n",
         read_register(vcpu, 0x6030000000100000),
         read_register(vcpu, 0x6030000000100002),
         read_register(vcpu, 0x6030000000100004),
         read_register(vcpu, 0x6030000000100006)
     );
-    printf("x04: %16llx x05: %16llx x06: %16llx x07: %16llx\n",
+    printf("x04: %16lx x05: %16lx x06: %16lx x07: %16lx\n",
         read_register(vcpu, 0x6030000000100008),
         read_register(vcpu, 0x603000000010000a),
         read_register(vcpu, 0x603000000010000c),
         read_register(vcpu, 0x603000000010000e)
     );
-    printf("x08: %16llx x09: %16llx x10: %16llx x11: %16llx\n",
+    printf("x08: %16lx x09: %16lx x10: %16lx x11: %16lx\n",
         read_register(vcpu, 0x6030000000100010),
         read_register(vcpu, 0x6030000000100012),
         read_register(vcpu, 0x6030000000100014),
         read_register(vcpu, 0x6030000000100016)
     );
-    printf("x12: %16llx x13: %16llx x14: %16llx x15: %16llx\n",
+    printf("x12: %16lx x13: %16lx x14: %16lx x15: %16lx\n",
         read_register(vcpu, 0x6030000000100018),
         read_register(vcpu, 0x603000000010001a),
         read_register(vcpu, 0x603000000010001c),
         read_register(vcpu, 0x603000000010001e)
     );
-    printf("x16: %16llx x17: %16llx x18: %16llx x19: %16llx\n",
+    printf("x16: %16lx x17: %16lx x18: %16lx x19: %16lx\n",
         read_register(vcpu, 0x6030000000100020),
         read_register(vcpu, 0x6030000000100022),
         read_register(vcpu, 0x6030000000100024),
         read_register(vcpu, 0x6030000000100026)
     );
-    printf("x20: %16llx x21: %16llx x22: %16llx x23: %16llx\n",
+    printf("x20: %16lx x21: %16lx x22: %16lx x23: %16lx\n",
         read_register(vcpu, 0x6030000000100028),
         read_register(vcpu, 0x603000000010002a),
         read_register(vcpu, 0x603000000010002c),
         read_register(vcpu, 0x603000000010002e)
     );
-    printf("x24: %16llx x25: %16llx x26: %16llx x27: %16llx\n",
+    printf("x24: %16lx x25: %16lx x26: %16lx x27: %16lx\n",
         read_register(vcpu, 0x6030000000100030),
         read_register(vcpu, 0x6030000000100032),
         read_register(vcpu, 0x6030000000100034),
         read_register(vcpu, 0x6030000000100036)
     );
-    printf("x28: %16llx x29: %16llx x30: %16llx\n",
+    printf("x28: %16lx x29: %16lx x30: %16lx\n",
         read_register(vcpu, 0x6030000000100038),
         read_register(vcpu, 0x603000000010003a),
         read_register(vcpu, 0x603000000010003c)
     );
-    printf(" sp: %16llx  pc: %16llx\n",
+    printf(" sp: %16lx  pc: %16lx\n",
         read_register(vcpu, 0x603000000010003e),
         read_register(vcpu, 0x6030000000100040)
     );
