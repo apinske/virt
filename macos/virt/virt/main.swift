@@ -14,7 +14,7 @@ print(VZVirtualMachineConfiguration.minimumAllowedMemorySize)
 print(VZVirtualMachineConfiguration.maximumAllowedMemorySize)
 
 let c = VZVirtualMachineConfiguration()
-let z = URL(fileURLWithPath: "vmlinuz").absoluteURL
+let z = URL(fileURLWithPath: "../vmlinuz").absoluteURL
 print(z)
 let b = VZLinuxBootLoader(kernelURL: z)
 b.commandLine = "console=ttyS0"
