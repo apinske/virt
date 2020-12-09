@@ -25,6 +25,7 @@
 /* Begin PBXFileReference section */
 		73012545257D10F5006151BD /* virt */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = virt; sourceTree = BUILT_PRODUCTS_DIR; };
 		73012548257D10F5006151BD /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		732DACBC257D12B6004EC9FB /* virt.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = virt.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +58,7 @@
 		73012547257D10F5006151BD /* virt */ = {
 			isa = PBXGroup;
 			children = (
+				732DACBC257D12B6004EC9FB /* virt.entitlements */,
 				73012548257D10F5006151BD /* main.swift */,
 			);
 			path = virt;
@@ -244,6 +246,7 @@
 		7301254D257D10F5006151BD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = virt/virt.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -255,6 +258,7 @@
 		7301254E257D10F5006151BD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = virt/virt.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
