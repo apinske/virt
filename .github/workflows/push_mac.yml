@@ -1,0 +1,12 @@
+name: push_mac
+on:
+  push:
+    branches: [ master ]
+jobs:
+  test:
+    runs-on: macos-11.0
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Build with Xcode
+      run: cd macos/virt && xcodebuild && build/Release/virt
