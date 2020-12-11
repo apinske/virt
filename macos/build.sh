@@ -2,15 +2,22 @@
 
 #doctl compute droplet create --image ubuntu-20-04-x64 --size s-1vcpu-1gb --region fra1 --ssh-keys $(doctl compute ssh-key list --format ID --no-header) --wait playground
 
-#wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.9.13.tar.xz
+apt update
+apt install make gcc flex bison libelf-dev
+wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.9.13.tar.xz
+tar xf linux-5.9.13.tar.xz
+cp config linux-5.9.13/.config
+cd linux-5.9.13
+make
+cd ..
 
-#wget https://dl-cdn.alpinelinux.org/alpine/v3.12/releases/x86_64/alpine-minirootfs-3.12.1-x86_64.tar.gz
+wget https://dl-cdn.alpinelinux.org/alpine/v3.12/releases/x86_64/alpine-minirootfs-3.12.1-x86_64.tar.gz
 dd if=/dev/zero of=vda.img bs=1M count=20
-mkfs.ext4 vda.img 
+mkfs.ext4 vda.img
 mkdir mnt
-mount -t ext4 -o loop vda.img mnt
-cd mnt/
-tar xzf ../alpine-minirootfs-3.12.1-x86_64.tar.gz 
+mount vda.img mnt
+cd mnt
+tar xf ../alpine-minirootfs-3.12.1-x86_64.tar.gz
 cd ..
 umount mnt
 

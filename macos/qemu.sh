@@ -1,4 +1,5 @@
 #!/bin/sh
+#apt install qemu-system-x86
 
 qemu-system-x86_64 \
       -nodefaults -nographic \
