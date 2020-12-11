@@ -1,0 +1,11 @@
+--- .config.old	2020-12-11 20:21:40.137899676 +0000
++++ .config	2020-12-11 20:21:57.597724261 +0000
+@@ -41,7 +41,7 @@
+ #
+ # Build Options
+ #
+-# CONFIG_STATIC is not set
++CONFIG_STATIC=y
+ # CONFIG_PIE is not set
+ # CONFIG_NOMMU is not set
+ # CONFIG_BUILD_LIBBUSYBOX is not set

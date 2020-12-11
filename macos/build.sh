@@ -3,7 +3,7 @@
 #doctl compute droplet create --image ubuntu-20-04-x64 --size s-1vcpu-1gb --region fra1 --ssh-keys $(doctl compute ssh-key list --format ID --no-header) --wait playground
 
 apt update
-apt install make gcc flex bison libelf-dev
+apt install make gcc flex bison libelf-dev libncurses-dev
 wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.9.13.tar.xz
 tar xf linux-5.9.13.tar.xz
 cp config linux-5.9.13/.config
@@ -11,13 +11,22 @@ cd linux-5.9.13
 make
 cd ..
 
-wget https://dl-cdn.alpinelinux.org/alpine/v3.12/releases/x86_64/alpine-minirootfs-3.12.1-x86_64.tar.gz
+wget https://busybox.net/downloads/busybox-1.32.0.tar.bz2
+tar xf busybox-1.32.0.tar.bz2
+cd busybox-1.32.0
+make defconfig
+patch .config ../config.patch
+make
+cd ..
+
 dd if=/dev/zero of=vda.img bs=1M count=20
 mkfs.ext4 vda.img
 mkdir mnt
 mount vda.img mnt
 cd mnt
-tar xf ../alpine-minirootfs-3.12.1-x86_64.tar.gz
+mkdir -p bin dev etc etc/init.d home lib mnt opt proc root run sbin sys tmp usr usr/bin usr/sbin var var/log var/run
+cp ../busybox-1.32.0/busybox bin/busybox
+for i in $(bin/busybox --list-full); do ln -s /bin/busybox $i; done
 cd ..
 umount mnt
 
