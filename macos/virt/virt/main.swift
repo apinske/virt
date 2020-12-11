@@ -8,16 +8,17 @@
 import Foundation
 import Virtualization
 
-print(VZVirtualMachineConfiguration.minimumAllowedCPUCount)
-print(VZVirtualMachineConfiguration.maximumAllowedCPUCount)
-print(VZVirtualMachineConfiguration.minimumAllowedMemorySize)
-print(VZVirtualMachineConfiguration.maximumAllowedMemorySize)
+func enableRawMode(fileHandle: FileHandle) {
+    let pointer = UnsafeMutablePointer<termios>.allocate(capacity: 1)
+    tcgetattr(fileHandle.fileDescriptor, pointer)
+    pointer.pointee.c_lflag &= ~UInt(ECHO | ICANON)
+    tcsetattr(fileHandle.fileDescriptor, TCSAFLUSH, pointer)
+}
 
 let c = VZVirtualMachineConfiguration()
-let z = URL(fileURLWithPath: "../vmlinuz").absoluteURL
-print(z)
+let z = URL(fileURLWithPath: "vmlinuz").absoluteURL
 let b = VZLinuxBootLoader(kernelURL: z)
-b.commandLine = "console=ttyS0"
+b.commandLine = "console=hvc0 root=/dev/vda rw init=/bin/sh"
 c.bootLoader = b
 c.cpuCount = 1
 c.memorySize = 512 * 1024 * 1024
@@ -38,10 +39,11 @@ class D : NSObject, VZVirtualMachineDelegate {
     }
 }
 
-//let att = try? VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "disk").absoluteURL, readOnly: false)
-//let disk = VZVirtioBlockDeviceConfiguration(attachment: att!)
-//c.storageDevices = [disk]
+let att = try? VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vda.img").absoluteURL, readOnly: false)
+let disk = VZVirtioBlockDeviceConfiguration(attachment: att!)
+c.storageDevices = [disk]
 
+enableRawMode(fileHandle: FileHandle.standardInput)
 let serial = VZVirtioConsoleDeviceSerialPortConfiguration()
 serial.attachment = VZFileHandleSerialPortAttachment(
     fileHandleForReading: FileHandle.standardInput,
@@ -49,15 +51,20 @@ serial.attachment = VZFileHandleSerialPortAttachment(
 )
 c.serialPorts = [serial]
 
-print(VZVirtualMachine.isSupported)
+//let entropy = VZVirtioEntropyDeviceConfiguration()
+//c.entropyDevices = [entropy]
+//let memoryBalloon = VZVirtioTraditionalMemoryBalloonDeviceConfiguration()
+//c.memoryBalloonDevices = [memoryBalloon]
+
+let networkDevice = VZVirtioNetworkDeviceConfiguration()
+networkDevice.macAddress = VZMACAddress(string: "0A:00:00:00:00:03")!
+networkDevice.attachment = VZNATNetworkDeviceAttachment()
+c.networkDevices = [networkDevice]
 
 let vm = VZVirtualMachine(configuration: c)
 let d = D()
 vm.delegate = d
-print(vm.canStart)
-print(vm.state.rawValue)
 vm.start { r in
-    print(vm.state.rawValue)
     switch r {
     case .success:
         NSLog("Virtual Machine Started")
@@ -65,6 +72,7 @@ vm.start { r in
         print(error)
         NSLog("Virtual Machine Failure: \(error)")
         exit(1)
-    }}
+    }
+}
 
 dispatchMain()

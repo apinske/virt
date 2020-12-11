@@ -9,4 +9,4 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Build with Xcode
-      run: cd macos/virt && xcodebuild && build/Release/virt
+      run: cd macos && ./virt.sh
