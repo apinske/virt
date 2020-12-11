@@ -18,7 +18,7 @@ func enableRawMode(fileHandle: FileHandle) {
 let c = VZVirtualMachineConfiguration()
 let z = URL(fileURLWithPath: "vmlinuz").absoluteURL
 let b = VZLinuxBootLoader(kernelURL: z)
-b.commandLine = "console=hvc0 root=/dev/vda rw init=/bin/sh"
+b.commandLine = "console=hvc0 root=/dev/vda rw"
 c.bootLoader = b
 c.cpuCount = 1
 c.memorySize = 512 * 1024 * 1024
@@ -32,6 +32,7 @@ do {
 class D : NSObject, VZVirtualMachineDelegate {
     func guestDidStop(_ virtualMachine: VZVirtualMachine) {
         print("stop")
+        exit(0)
     }
     func virtualMachine(_ virtualMachine: VZVirtualMachine, didStopWithError error: Error) {
         print(error)
