@@ -19,12 +19,14 @@ patch .config ../config.patch
 make
 cd ..
 
+umount mnt
 dd if=/dev/zero of=vda.img bs=1M count=20
 mkfs.ext4 vda.img
 mkdir mnt
 mount vda.img mnt
 cd mnt
-mkdir -p bin dev etc etc/init.d home lib mnt opt proc root run sbin sys tmp usr usr/bin usr/sbin var var/log var/run
+mkdir -p bin dev etc home lib mnt opt proc root run sbin sys tmp usr usr/bin usr/sbin var var/log var/run
+cp -r ../etc/* etc/
 cp ../busybox-1.32.0/busybox bin/busybox
 for i in $(bin/busybox --list-full); do ln -s /bin/busybox $i; done
 cd ..

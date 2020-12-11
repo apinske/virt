@@ -1,0 +1,5 @@
+#!/bin/sh
+hostname virt
+uname -a
+mount -a
+/sbin/syslogd
