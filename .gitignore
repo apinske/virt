@@ -4,3 +4,4 @@
 hypervisor
 *.xcuserstate
 build/
+vmlinuz

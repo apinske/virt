@@ -1,3 +1,3 @@
 #!/bin/sh
 
-scp playground:~/l.tgz . && tar xzf l.tgz && rm l.tgz
+scp playground:~/simpleos/macos/l.tgz . && tar xzf l.tgz && rm l.tgz
