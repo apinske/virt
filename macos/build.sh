@@ -39,6 +39,7 @@ cd mnt
 mkdir -p bin dev etc home lib mnt proc root run sbin sys tmp usr usr/bin usr/sbin usr/lib var var/cache var/lib var/lock var/log var/tmp
 ln -s /run var/run
 cp -r ../etc/* etc/
+cp -r ../usr/* usr/
 cp ../busybox-1.32.0/busybox bin/busybox
 for i in $(bin/busybox --list-full); do ln -s /bin/busybox $i; done
 tar xf ../apk-tools-static-2.10.5-r1.apk sbin/apk.static
