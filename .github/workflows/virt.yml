@@ -1,15 +1,15 @@
 name: Build Tool
- on:
-   workflow_dispatch:
- jobs:
-   build:
-     runs-on: macos-11.0
-     steps:
-     - name: Checkout
-       uses: actions/checkout@v2
-     - name: Build with Xcode
-       run: cd macos/virt && xcodebuild
-     - name: Upload a Build Artifact
-       uses: actions/upload-artifact@v2
-       with:
-         path: macos/virt/build/Release/virt
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: macos-11.0
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Build with Xcode
+      run: cd macos/virt && xcodebuild
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        path: macos/virt/build/Release/virt
