@@ -13,9 +13,8 @@ cd ..
 
 wget https://busybox.net/downloads/busybox-1.32.0.tar.bz2
 tar xf busybox-1.32.0.tar.bz2
+cp config-busybox busybox-1.32.0/.config
 cd busybox-1.32.0
-make defconfig
-patch .config ../config.patch
 make
 cd ..
 
