@@ -23,7 +23,7 @@ if [ ! -d busybox-1.32.0 ]; then
 fi
 cd busybox-1.32.0
 cp ../config-busybox .config
-make
+make busybox
 cd ..
 
 umount mnt
