@@ -6,7 +6,7 @@ apt update
 apt install make gcc flex bison libelf-dev libncurses-dev
 wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.9.13.tar.xz
 tar xf linux-5.9.13.tar.xz
-cp config linux-5.9.13/.config
+cp config-linux linux-5.9.13/.config
 cd linux-5.9.13
 make
 cd ..
@@ -31,6 +31,7 @@ for i in $(bin/busybox --list-full); do ln -s /bin/busybox $i; done
 cd ..
 umount mnt
 
-cp linux-5.9.13/.config config
+cp linux-5.9.13/.config config-linux
+cp busybox-1.32.0/.config config-busybox
 cp linux-5.9.13/arch/x86/boot/bzImage vmlinuz
-tar czf l.tgz vmlinuz config vda.img
+tar czf l.tgz vmlinuz vda.img
