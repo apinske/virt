@@ -49,4 +49,3 @@ umount mnt
 cp linux-5.9.13/.config config-linux
 cp busybox-1.32.0/.config config-busybox
 cp linux-5.9.13/arch/x86/boot/bzImage vmlinuz
-tar czf l.tgz vmlinuz vda.img
