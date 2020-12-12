@@ -2,18 +2,26 @@
 
 #doctl compute droplet create --image ubuntu-20-04-x64 --size s-1vcpu-1gb --region fra1 --ssh-keys $(doctl compute ssh-key list --format ID --no-header) --wait playground
 
-apt update
-apt install make gcc flex bison libelf-dev libncurses-dev
-wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.9.13.tar.xz
-tar xf linux-5.9.13.tar.xz
-cp config-linux linux-5.9.13/.config
+if [ ! -d mnt ]; then
+   apt update
+   apt install make gcc flex bison libelf-dev libncurses-dev
+fi
+
+if [ ! -d linux-5.9.13 ]; then
+    wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.9.13.tar.xz
+    tar xf linux-5.9.13.tar.xz
+    cp config-linux linux-5.9.13/.config
+fi
+
 cd linux-5.9.13
 make
 cd ..
 
-wget https://busybox.net/downloads/busybox-1.32.0.tar.bz2
-tar xf busybox-1.32.0.tar.bz2
-cp config-busybox busybox-1.32.0/.config
+if [ ! -d busybox-1.32.0 ]; then
+    wget https://busybox.net/downloads/busybox-1.32.0.tar.bz2
+    tar xf busybox-1.32.0.tar.bz2
+    cp config-busybox busybox-1.32.0/.config
+fi
 cd busybox-1.32.0
 make
 cd ..
