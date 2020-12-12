@@ -17,7 +17,7 @@ jobs:
         path: macos/busybox-1.32.0
         key: ${{ runner.os }}-busybox-1.32.0
     - name: build
-      run: cd macos && ./build.sh
+      run: cd macos && sudo ./build.sh
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2
       with:
