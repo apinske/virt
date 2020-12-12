@@ -1,0 +1,24 @@
+name: Build Base Image
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache Kernel
+      uses: actions/cache@v2
+      with:
+        path: macos/linux-5.9.13
+        key: ${{ runner.os }}-linux-5.9.13
+    - name: Cache Busybox
+      uses: actions/cache@v2
+      with:
+        path: macos/busybox-1.32.0
+        key: ${{ runner.os }}-busybox-1.32.0
+    - name: build
+      run: cd macos && sudo ./build.sh
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        path: macos/l.tgz
