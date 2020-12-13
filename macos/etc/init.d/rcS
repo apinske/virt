@@ -4,5 +4,6 @@ uname -a
 mount -a
 mount -o rw,remount /
 /sbin/syslogd
+/sbin/klogd
 /sbin/udhcpc -p /run/udhcpc.pid -C
 #apk.static -X http://dl-cdn.alpinelinux.org/alpine/v3.12/main -U --allow-untrusted --initdb add apk-tools
