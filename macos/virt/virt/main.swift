@@ -8,71 +8,78 @@
 import Foundation
 import Virtualization
 
-func enableRawMode(fileHandle: FileHandle) {
-    let pointer = UnsafeMutablePointer<termios>.allocate(capacity: 1)
-    tcgetattr(fileHandle.fileDescriptor, pointer)
-    pointer.pointee.c_lflag &= ~UInt(ECHO | ICANON)
-    tcsetattr(fileHandle.fileDescriptor, TCSAFLUSH, pointer)
+let tcattr = UnsafeMutablePointer<termios>.allocate(capacity: 1)
+tcgetattr(FileHandle.standardInput.fileDescriptor, tcattr)
+let oldValue = tcattr.pointee.c_lflag
+atexit {
+    tcattr.pointee.c_lflag = oldValue
+    tcsetattr(FileHandle.standardInput.fileDescriptor, TCSAFLUSH, tcattr)
+    tcattr.deallocate()
 }
+tcattr.pointee.c_lflag &= ~UInt(ECHO | ICANON | ISIG)
+tcsetattr(FileHandle.standardInput.fileDescriptor, TCSAFLUSH, tcattr)
 
-let c = VZVirtualMachineConfiguration()
-let z = URL(fileURLWithPath: "vmlinuz").absoluteURL
-let b = VZLinuxBootLoader(kernelURL: z)
-b.commandLine = "console=hvc0 root=/dev/vda rw"
-c.bootLoader = b
-c.cpuCount = 1
-c.memorySize = 512 * 1024 * 1024
+let config = VZVirtualMachineConfiguration()
+config.cpuCount = 2
+config.memorySize = 2 * 1024 * 1024 * 1024
+
+let bootloader = VZLinuxBootLoader(kernelURL: URL(fileURLWithPath: "vmlinuz"))
+bootloader.commandLine = "console=hvc0 root=/dev/vda"
+config.bootLoader = bootloader
+
 do {
-    try c.validate()
+    let vda = try VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vda.img"), readOnly: false)
+    config.storageDevices = [VZVirtioBlockDeviceConfiguration(attachment: vda)]
 } catch {
-    print("error")
+    NSLog("Virtual Machine Storage Error: \(error)")
     exit(1)
 }
 
-class D : NSObject, VZVirtualMachineDelegate {
-    func guestDidStop(_ virtualMachine: VZVirtualMachine) {
-        print("stop")
-        exit(0)
-    }
-    func virtualMachine(_ virtualMachine: VZVirtualMachine, didStopWithError error: Error) {
-        print(error)
-        exit(1)
-    }
-}
+// TODO secondary writable storage
 
-let att = try? VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vda.img").absoluteURL, readOnly: false)
-let disk = VZVirtioBlockDeviceConfiguration(attachment: att!)
-c.storageDevices = [disk]
-
-enableRawMode(fileHandle: FileHandle.standardInput)
 let serial = VZVirtioConsoleDeviceSerialPortConfiguration()
 serial.attachment = VZFileHandleSerialPortAttachment(
     fileHandleForReading: FileHandle.standardInput,
     fileHandleForWriting: FileHandle.standardOutput
 )
-c.serialPorts = [serial]
+config.serialPorts = [serial]
 
-//let entropy = VZVirtioEntropyDeviceConfiguration()
-//c.entropyDevices = [entropy]
-//let memoryBalloon = VZVirtioTraditionalMemoryBalloonDeviceConfiguration()
-//c.memoryBalloonDevices = [memoryBalloon]
+config.entropyDevices = [VZVirtioEntropyDeviceConfiguration()]
 
-let networkDevice = VZVirtioNetworkDeviceConfiguration()
-networkDevice.macAddress = VZMACAddress(string: "0A:00:00:00:00:03")!
-networkDevice.attachment = VZNATNetworkDeviceAttachment()
-c.networkDevices = [networkDevice]
+let network = VZVirtioNetworkDeviceConfiguration()
+network.macAddress = VZMACAddress(string: "0A:00:00:00:00:03")!
+network.attachment = VZNATNetworkDeviceAttachment()
+config.networkDevices = [network]
 
-let vm = VZVirtualMachine(configuration: c)
-let d = D()
-vm.delegate = d
-vm.start { r in
-    switch r {
+do {
+    try config.validate()
+} catch {
+    NSLog("Virtual Machine Config Error: \(error)")
+    exit(2)
+}
+
+class Delegate : NSObject, VZVirtualMachineDelegate {
+    func guestDidStop(_ virtualMachine: VZVirtualMachine) {
+        NSLog("Virtual Machine Stopped")
+        exit(0)
+    }
+    func virtualMachine(_ virtualMachine: VZVirtualMachine, didStopWithError error: Error) {
+        NSLog("Virtual Machine Run Error: \(error)")
+        exit(4)
+    }
+}
+let delegate = Delegate()
+
+let vm = VZVirtualMachine(configuration: config)
+vm.delegate = delegate
+
+vm.start { result in
+    switch result {
     case .success:
         NSLog("Virtual Machine Started")
     case let .failure(error):
-        print(error)
-        NSLog("Virtual Machine Failure: \(error)")
-        exit(1)
+        NSLog("Virtual Machine Start Error: \(error)")
+        exit(3)
     }
 }
 
