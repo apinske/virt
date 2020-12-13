@@ -1,5 +1,4 @@
 ::sysinit:/etc/init.d/rcS
 hvc0::respawn:/sbin/getty 38400 hvc0
-::shutdown:/sbin/swapoff -a
 ::shutdown:/bin/umount -a -r
 ::restart:/sbin/init
