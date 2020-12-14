@@ -13,9 +13,9 @@ jobs:
           macos/linux-5.9.13
           macos/musl-1.2.1
           macos/busybox-1.32.0
-        key: cache-1
+        key: cache-2
         restore-keys: |
-          ${{ runner.os }}-linux-5.9.13
+          cache-1
     - name: Build
       run: cd macos && sudo ./build.sh && tar czf virt.tar.gz vmlinuz vda.img
     - name: Upload Artifacts
