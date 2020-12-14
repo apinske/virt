@@ -4,7 +4,7 @@
 
 if [ ! -d mnt ]; then
    # apt update
-   apt install make gcc clang flex bison libelf-dev libncurses-dev
+   apt install make gcc clang llvm lld flex bison libelf-dev libncurses-dev
 fi
 
 if [ ! -d linux-5.9.13 ]; then
@@ -13,7 +13,7 @@ if [ ! -d linux-5.9.13 ]; then
 fi
 cd linux-5.9.13
 cp ../config-linux .config
-make CC=clang V=2
+make CC=clang LLVM=1 V=2
 cd ..
 
 if [ ! -d musl-1.2.1 ]; then
