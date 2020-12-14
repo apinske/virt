@@ -17,13 +17,28 @@ cp ../config-linux .config
 make V=2
 cd ..
 
+if [ ! -d musl-1.2.1 ]; then
+    wget https://musl.libc.org/releases/musl-1.2.1.tar.gz
+    tar xf musl-1.2.1.tar.gz
+fi
+cd musl-1.2.1
+./configure --prefix=$PWD/build --disable-static
+make
+make install
+ln -s /usr/bin/ar build/bin/musl-ar
+ln -s /usr/bin/strip build/bin/musl-strip
+ln -s /usr/include/linux build/include/linux
+ln -s /usr/include/asm-generic build/include/asm
+ln -s /usr/include/asm-generic build/include/asm-generic
+cd ..
+
 if [ ! -d busybox-1.32.0 ]; then
     wget https://busybox.net/downloads/busybox-1.32.0.tar.bz2
     tar xf busybox-1.32.0.tar.bz2
 fi
 cd busybox-1.32.0
 cp ../config-busybox .config
-make busybox
+PATH=../musl-1.2.1/build/bin:$PATH make busybox
 cd ..
 
 if [ ! -f apk-tools-static-2.10.5-r1.apk ]; then
@@ -40,8 +55,10 @@ mkdir -p bin dev etc home lib mnt proc root run sbin sys tmp usr usr/bin usr/sbi
 ln -s /run var/run
 cp -r ../etc/* etc/
 cp -r ../usr/* usr/
+cp ../musl-1.2.1/build/lib/libc.so lib/libc.so
+ln -s libc.so lib/ld-musl-x86_64.so.1
 cp ../busybox-1.32.0/busybox bin/busybox
-for i in $(bin/busybox --list-full); do ln -s /bin/busybox $i; done
+for i in $(LD_LIBRARY_PATH=lib bin/busybox --list-full); do ln -s /bin/busybox $i; done
 tar xf ../apk-tools-static-2.10.5-r1.apk sbin/apk.static
 cd ..
 umount mnt
