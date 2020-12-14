@@ -4,17 +4,16 @@
 
 if [ ! -d mnt ]; then
    # apt update
-   apt install make gcc flex bison libelf-dev libncurses-dev
+   apt install make gcc clang flex bison libelf-dev libncurses-dev
 fi
 
 if [ ! -d linux-5.9.13 ]; then
     wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.9.13.tar.xz
     tar xf linux-5.9.13.tar.xz
 fi
-
 cd linux-5.9.13
 cp ../config-linux .config
-make V=2
+make CC=clang V=2
 cd ..
 
 if [ ! -d musl-1.2.1 ]; then
@@ -60,6 +59,7 @@ ln -s libc.so lib/ld-musl-x86_64.so.1
 cp ../busybox-1.32.0/busybox bin/busybox
 for i in $(LD_LIBRARY_PATH=lib bin/busybox --list-full); do ln -s /bin/busybox $i; done
 tar xf ../apk-tools-static-2.10.5-r1.apk sbin/apk.static
+#sbin/apk.static --allow-untrusted --initdb --root . add alpine-base
 cd ..
 umount mnt
 
