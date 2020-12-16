@@ -13,7 +13,8 @@ if [ ! -d linux-5.9.13 ]; then
 fi
 cd linux-5.9.13
 cp ../config-linux .config
-make CC=clang LLVM=1 V=2
+#export ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
+make CC=clang LLVM=1 LLVM_IAS=1 V=2
 cd ..
 
 if [ ! -d musl-1.2.1 ]; then
