@@ -66,7 +66,7 @@ tar xf ../apk-tools-static-2.10.5-r1.apk sbin/apk.static
 cd ..
 umount mnt
 
-cp linux-5.9.13/.config config-linux-$ARCH
 cp busybox-1.32.0/.config config-busybox
 cp linux-5.9.13/arch/arm64/boot/Image vmlinuz
 cp linux-5.9.13/arch/x86/boot/bzImage vmlinuz
+cp linux-5.9.13/.config config-linux-$ARCH
