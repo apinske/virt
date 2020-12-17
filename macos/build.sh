@@ -4,7 +4,7 @@
 
 if [ ! -d mnt ]; then
    # apt update
-   apt install make gcc clang llvm lld flex bison libelf-dev libncurses-dev
+   apt install make gcc clang llvm lld flex bison libelf-dev libncurses-dev libssl-dev
 fi
 
 if [ ! -d linux-5.9.13 ]; then
@@ -12,9 +12,8 @@ if [ ! -d linux-5.9.13 ]; then
     tar xf linux-5.9.13.tar.xz
 fi
 cd linux-5.9.13
-cp ../config-linux-x86_64 .config
-#export ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
-make CC=clang LLVM=1 LLVM_IAS=1 V=2
+cp ../config-linux-$ARCH .config
+make CC=clang LLVM=1 LLVM_IAS=1 -j2
 cd ..
 
 if [ ! -d musl-1.2.1 ]; then
@@ -64,6 +63,7 @@ tar xf ../apk-tools-static-2.10.5-r1.apk sbin/apk.static
 cd ..
 umount mnt
 
-cp linux-5.9.13/.config config-linux
+cp linux-5.9.13/.config config-linux-$ARCH
 cp busybox-1.32.0/.config config-busybox
+cp linux-5.9.13/arch/arm64/boot/Image vmlinuz
 cp linux-5.9.13/arch/x86/boot/bzImage vmlinuz
