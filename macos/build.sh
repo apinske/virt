@@ -12,7 +12,7 @@ if [ ! -d linux-5.9.13 ]; then
     tar xf linux-5.9.13.tar.xz
 fi
 cd linux-5.9.13
-cp ../config-linux .config
+cp ../config-linux-x86_64 .config
 #export ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
 make CC=clang LLVM=1 LLVM_IAS=1 V=2
 cd ..
