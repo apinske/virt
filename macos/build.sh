@@ -13,7 +13,7 @@ if [ ! -d linux-5.9.13 ]; then
 fi
 cd linux-5.9.13
 cp ../config-linux-$ARCH .config
-if [ "$ARCH" == "x86_64" ]; then
+if [ "$ARCH" = "x86_64" ]; then
     unset ARCH
 fi
 make CC=clang LLVM=1 LLVM_IAS=1 -j2
