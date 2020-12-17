@@ -16,7 +16,7 @@ jobs:
         key: cache-x86_64-1
         restore-keys: cache-x86_64-0
     - name: Build
-      run: cd macos && ARCH=x86_64 sudo ./build.sh && tar czf virt.tar.gz vmlinuz vda.img
+      run: cd macos && sudo ARCH=x86_64 ./build.sh && tar czf virt.tar.gz vmlinuz vda.img
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
       with:
