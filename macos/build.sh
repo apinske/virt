@@ -4,7 +4,7 @@
 
 if [ ! -d mnt ]; then
    # apt update
-   apt install make gcc clang llvm lld flex bison libelf-dev libncurses-dev libssl-dev
+   apt install make clang llvm lld flex bison libelf-dev libncurses-dev libssl-dev
 fi
 
 if [ ! -d linux-5.9.13 ]; then
@@ -16,37 +16,19 @@ cp ../config-linux-$ARCH .config
 if [ "$ARCH" = "x86_64" ]; then
     unset ARCH
     make CC=clang LLVM=1 -j2
+    cp arch/x86/boot/bzImage ../vmlinuz
+    cp .config ../config-linux-x86_64
+    ARCH=x86_64
 else
     make CC=clang LLVM=1 LLVM_IAS=1 -j2
+    cp arch/arm64/boot/Image ../vmlinuz
+    cp .config ../config-linux-arm64
+    ARCH=aarch64
 fi
 cd ..
 
-if [ ! -d musl-1.2.1 ]; then
-    wget https://musl.libc.org/releases/musl-1.2.1.tar.gz
-    tar xf musl-1.2.1.tar.gz
-fi
-cd musl-1.2.1
-./configure --prefix=$PWD/build --disable-static
-make
-make install
-ln -s /usr/bin/ar build/bin/musl-ar
-ln -s /usr/bin/strip build/bin/musl-strip
-ln -s /usr/include/linux build/include/linux
-ln -s /usr/include/asm-generic build/include/asm
-ln -s /usr/include/asm-generic build/include/asm-generic
-cd ..
-
-if [ ! -d busybox-1.32.0 ]; then
-    wget https://busybox.net/downloads/busybox-1.32.0.tar.bz2
-    tar xf busybox-1.32.0.tar.bz2
-fi
-cd busybox-1.32.0
-cp ../config-busybox .config
-PATH=../musl-1.2.1/build/bin:$PATH make busybox
-cd ..
-
-if [ ! -f apk-tools-static-2.10.5-r1.apk ]; then
-    wget https://dl-cdn.alpinelinux.org/alpine/v3.12/main/x86_64/apk-tools-static-2.10.5-r1.apk
+if [ ! -f alpine-minirootfs-3.12.3-$ARCH.tar.gz ]; then
+    wget https://dl-cdn.alpinelinux.org/alpine/v3.12/releases/$ARCH/alpine-minirootfs-3.12.3-$ARCH.tar.gz
 fi
 
 umount mnt
@@ -55,20 +37,17 @@ mkfs.ext4 vda.img
 mkdir mnt
 mount vda.img mnt
 cd mnt
-mkdir -p bin dev etc home lib mnt proc root run sbin sys tmp usr usr/bin usr/sbin usr/lib var var/cache var/lib var/lock var/log var/tmp
-ln -s /run var/run
-cp -r ../etc/* etc/
-cp -r ../usr/* usr/
-cp ../musl-1.2.1/build/lib/libc.so lib/libc.so
-ln -s libc.so lib/ld-musl-x86_64.so.1
-cp ../busybox-1.32.0/busybox bin/busybox
-for i in $(LD_LIBRARY_PATH=lib bin/busybox --list-full); do ln -s /bin/busybox $i; done
-tar xf ../apk-tools-static-2.10.5-r1.apk sbin/apk.static
-#sbin/apk.static --allow-untrusted --initdb --root . add alpine-base
+tar xf ../alpine-minirootfs-3.12.3-$ARCH.tar.gz
+rm -rf etc/logrotate.d etc/modprobe.d etc/network
+rm etc/modules etc/udhcpd.conf etc/sysctl.conf etc/hostname etc/motd etc/issue etc/shadow
+cp ../etc/passwd etc/passwd
+cp ../etc/group etc/group
+cp ../etc/hosts etc/hosts
+cp ../etc/inittab etc/inittab
+cp ../etc/fstab etc/fstab
+cp -r ../etc/init.d/* etc/init.d/
+cp ../usr/share/udhcpc/default.script usr/share/udhcpc/default.script
+rm -rf lib/sysctl.d
+rm -rf media opt srv
 cd ..
 umount mnt
-
-cp busybox-1.32.0/.config config-busybox
-cp linux-5.9.13/arch/arm64/boot/Image vmlinuz
-cp linux-5.9.13/arch/x86/boot/bzImage vmlinuz
-cp linux-5.9.13/.config config-linux-$ARCH
