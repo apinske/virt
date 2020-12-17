@@ -15,8 +15,10 @@ cd linux-5.9.13
 cp ../config-linux-$ARCH .config
 if [ "$ARCH" = "x86_64" ]; then
     unset ARCH
+    make CC=clang LLVM=1 -j2
+else
+    make CC=clang LLVM=1 LLVM_IAS=1 -j2
 fi
-make CC=clang LLVM=1 LLVM_IAS=1 -j2
 cd ..
 
 if [ ! -d musl-1.2.1 ]; then
