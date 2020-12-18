@@ -13,8 +13,8 @@ jobs:
           macos/linux-5.9.13
           macos/musl-1.2.1
           macos/busybox-1.32.0
-        key: cache-x86_64-1
-        restore-keys: cache-x86_64-0
+        key: cache-x86_64-2
+        restore-keys: cache-x86_64-1
     - name: Build
       run: cd macos && sudo ARCH=x86_64 ./build.sh && tar czf virt.tar.gz vmlinuz vda.img
     - name: Upload Artifacts
