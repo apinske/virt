@@ -1,4 +1,4 @@
 ::sysinit:/etc/init.d/rcS
-hvc0::respawn:/sbin/getty 38400 hvc0
+hvc0::respawn:/bin/login root
 ::shutdown:/bin/umount -a -r
 ::restart:/sbin/init
