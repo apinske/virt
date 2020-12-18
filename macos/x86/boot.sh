@@ -16,5 +16,6 @@ cat boot.bin kernel.bin >| boot.img
 
 #qemu-system-i386 boot.img
 
-clang -mmacosx-version-min=10.13 -o hypervisor -framework Hypervisor hypervisor.c
+clang -o hypervisor -framework Hypervisor hypervisor.c
+codesign --sign - --entitlements hypervisor.entitlements hypervisor
 ./hypervisor
