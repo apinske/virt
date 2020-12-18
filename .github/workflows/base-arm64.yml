@@ -9,10 +9,7 @@ jobs:
     - name: Cache
       uses: actions/cache@v2
       with:
-        path: |
-          macos/linux-5.9.13
-          macos/musl-1.2.1
-          macos/busybox-1.32.0
+        path: macos/linux-5.9.13
         key: cache-arm64-2
         restore-keys: cache-arm64-1
     - name: Build
