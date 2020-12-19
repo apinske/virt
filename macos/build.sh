@@ -46,6 +46,7 @@ cp ../etc/hosts etc/hosts
 cp ../etc/inittab etc/inittab
 cp ../etc/fstab etc/fstab
 cp -Tr ../etc/init.d etc/init.d
+mkdir etc/dropbear
 cp -Tr ../root root
 cp ../usr/share/udhcpc/default.script usr/share/udhcpc/default.script
 rm -rf lib/sysctl.d
