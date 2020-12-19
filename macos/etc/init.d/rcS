@@ -7,3 +7,4 @@ mount -o rw,remount /
 /sbin/syslogd
 /sbin/klogd
 /sbin/udhcpc -p /run/udhcpc.pid -C
+/usr/sbin/ntpd -p pool.ntp.org
