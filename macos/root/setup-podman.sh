@@ -1,5 +1,4 @@
 #!/bin/sh
-#!/bin/sh
 if [ "$(apk info | grep podman)" = "podman" ]; then
     echo "export CONTAINER_HOST=tcp://$(ip -o addr show | awk '{ print $4 }' | cut -d'/' -f1):58080"
 else
