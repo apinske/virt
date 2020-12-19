@@ -45,7 +45,8 @@ cp ../etc/group etc/group
 cp ../etc/hosts etc/hosts
 cp ../etc/inittab etc/inittab
 cp ../etc/fstab etc/fstab
-cp -r ../etc/init.d/* etc/init.d/
+cp -Tr ../etc/init.d etc/init.d
+cp -Tr ../root root
 cp ../usr/share/udhcpc/default.script usr/share/udhcpc/default.script
 rm -rf lib/sysctl.d
 rm -rf media opt srv
