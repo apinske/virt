@@ -1,6 +1,7 @@
 #!/bin/sh
 hostname virt
 uname -a
+mkdir /dev/shm
 mount -a
 mount -o rw,remount /
 /sbin/syslogd
