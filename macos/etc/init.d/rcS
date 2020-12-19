@@ -8,3 +8,5 @@ mount -o rw,remount /
 /sbin/klogd
 /sbin/udhcpc -p /run/udhcpc.pid -C
 /usr/sbin/ntpd -p pool.ntp.org
+[ -d /etc/dropbear ] || mkdir /etc/dropbear
+[ -f /usr/sbin/dropbear ] && /usr/sbin/dropbear -R -B

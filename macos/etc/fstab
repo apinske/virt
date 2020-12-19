@@ -2,6 +2,7 @@ proc	/proc	proc	defaults	0 0
 sysfs	/sys	sysfs	defaults	0 0
 none	/proc/sys/fs/binfmt_misc	binfmt_misc	defaults	0 0
 none	/sys/fs/cgroup	cgroup2	defaults	0 0
+devpts	/dev/pts	devpts	defaults	0 0
 tmpfs	/run	tmpfs	defaults	0 0
 tmpfs	/tmp	tmpfs	defaults	0 0
 tmpfs	/dev/shm	tmpfs	defaults	0 0
