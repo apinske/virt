@@ -1,2 +1,8 @@
 #!/bin/sh
+[ -f /var/run/dropbear.pid ] && kill $(cat /var/run/dropbear.pid)
+kill $(cat /var/run/ntpd.pid)
+kill $(cat /var/run/udhcpc.pid)
+kill $(cat /var/run/klogd.pid)
+kill $(cat /var/run/syslogd.pid)
+mount -o ro,remount /
 umount -a -r
