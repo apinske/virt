@@ -1,12 +1,11 @@
 #!/bin/sh
 hostname virt
-uname -a
 mkdir /dev/pts
 mkdir /dev/shm
 mount -a
-mount -o rw,remount /
+mount -o rw,remount / | logger -t mount
 /sbin/syslogd
 /sbin/klogd
-/sbin/udhcpc -p /run/udhcpc.pid -C
+/sbin/udhcpc -p /run/udhcpc.pid -C -S 2> /dev/null
 /usr/sbin/ntpd -p pool.ntp.org
 [ -f /usr/sbin/dropbear ] && /usr/sbin/dropbear -R -B
