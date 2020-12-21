@@ -3,7 +3,7 @@
 #doctl compute droplet create --image ubuntu-20-04-x64 --size s-1vcpu-1gb --region fra1 --ssh-keys $(doctl compute ssh-key list --format ID --no-header) --wait playground
 
 if [ ! -d mnt ]; then
-   # apt update
+   apt update
    apt install wget make clang llvm lld flex bison libelf-dev libncurses-dev libssl-dev
 fi
 
