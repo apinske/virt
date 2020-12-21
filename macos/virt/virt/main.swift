@@ -19,6 +19,17 @@ atexit {
 tcattr.pointee.c_lflag &= ~UInt(ECHO | ICANON | ISIG)
 tcsetattr(FileHandle.standardInput.fileDescriptor, TCSAFLUSH, tcattr)
 
+if (access("vdb.img", F_OK) != 0) {
+    if (fclose(fopen("vdb.img", "w")) != 0) {
+        perror("create vdb.img")
+        exit(1)
+    }
+    if (truncate("vdb.img", 10 * 1024 * 1024 * 1024) != 0) {
+        perror("resize vdb.img")
+        exit(1)
+    }
+}
+
 let config = VZVirtualMachineConfiguration()
 config.cpuCount = 2
 config.memorySize = 2 * 1024 * 1024 * 1024
@@ -31,11 +42,17 @@ do {
     let vda = try VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vda.img"), readOnly: false)
     config.storageDevices = [VZVirtioBlockDeviceConfiguration(attachment: vda)]
 } catch {
-    NSLog("Virtual Machine Storage Error: \(error)")
+    NSLog("Virtual Machine Primary Storage Error: \(error)")
     exit(1)
 }
 
-// TODO secondary writable storage
+do {
+    let vdb = try VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vdb.img"), readOnly: false)
+    config.storageDevices += [VZVirtioBlockDeviceConfiguration(attachment: vdb)]
+} catch {
+    NSLog("Virtual Machine Secondary Storage Error: \(error)")
+    exit(1)
+}
 
 let serial = VZVirtioConsoleDeviceSerialPortConfiguration()
 serial.attachment = VZFileHandleSerialPortAttachment(
