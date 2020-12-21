@@ -4,8 +4,7 @@
 
 if [ ! -d mnt ]; then
    # apt update
-   sudo apt uninstall clang llvm lld
-   sudo apt install make clang-11 llvm-11 lld-11 flex bison libelf-dev libncurses-dev libssl-dev
+   sudo apt install make clang llvm lld flex bison libelf-dev libncurses-dev libssl-dev
 fi
 
 if [ ! -d linux-5.10.1 ]; then
