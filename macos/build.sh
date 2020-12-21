@@ -7,11 +7,11 @@ if [ ! -d mnt ]; then
    apt install make clang llvm lld flex bison libelf-dev libncurses-dev libssl-dev
 fi
 
-if [ ! -d linux-5.9.13 ]; then
-    wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.9.13.tar.xz
-    tar xf linux-5.9.13.tar.xz
+if [ ! -d linux-5.10.1 ]; then
+    wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.10.1.tar.xz
+    tar xf linux-5.10.1.tar.xz
 fi
-cd linux-5.9.13
+cd linux-5.10.1
 cp ../config-linux-$ARCH .config
 if [ "$ARCH" = "x86_64" ]; then
     unset ARCH
