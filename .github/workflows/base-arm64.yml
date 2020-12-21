@@ -9,11 +9,11 @@ jobs:
     - name: Cache
       uses: actions/cache@v2
       with:
-        path: macos/linux-5.9.13
-        key: cache-arm64-4
-        restore-keys: cache-arm64-3
+        path: macos/linux-5.10.1
+        key: cache-arm64-5
+        restore-keys: cache-arm64-0
     - name: Build
-      run: cd macos && sudo ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- ./build.sh && tar czf virt.tar.gz vmlinuz vda.img
+      run: cd macos && ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- ./build.sh && sudo ARCH=aarch64 ./buildImage.sh && tar czf virt.tar.gz vmlinuz vda.img
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
       with:
