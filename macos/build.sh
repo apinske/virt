@@ -4,7 +4,7 @@
 
 if [ ! -d mnt ]; then
    apt update
-   apt install wget make clang llvm lld flex bison libelf-dev libncurses-dev libssl-dev
+   apt install -y wget make clang llvm lld flex bison libelf-dev libncurses-dev libssl-dev
 fi
 
 if [ ! -d linux-5.10.1 ]; then
