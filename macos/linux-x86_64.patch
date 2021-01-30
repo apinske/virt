@@ -1,0 +1,10 @@
+diff -r ../../../simpleos/macos/linux/arch/x86/Makefile ./arch/x86/Makefile
+35c35
+<                  -Wall -Wstrict-prototypes -march=i386 -mregparm=3 \
+---
+>                  -Wall -Wstrict-prototypes --target=i386 -mregparm=3 \
+diff -r ../../../simpleos/macos/linux/arch/x86/boot/compressed/Makefile ./arch/x86/boot/compressed/Makefile                                                                                                 
+35c35                                                                                                                                                                                                       
+< cflags-$(CONFIG_X86_64) := -mcmodel=small -mno-red-zone
+---
+> cflags-$(CONFIG_X86_64) := -mcmodel=small -mno-red-zone --target=x86_64-pc-linux-gnu

@@ -14,14 +14,11 @@ if [ ! -d linux ]; then
 fi
 cd linux
 cp ../config-linux-$ARCH .config
+make CC=clang LLVM=1 LLVM_IAS=1 -j2
+cp .config ../config-linux-$ARCH
 if [ "$ARCH" = "x86_64" ]; then
-    unset ARCH
-    make CC=clang LLVM=1 -j2
     cp arch/x86/boot/bzImage ../vmlinuz
-    cp .config ../config-linux-x86_64
 else
-    make CC=clang LLVM=1 LLVM_IAS=1 -j2
     cp arch/arm64/boot/Image ../vmlinuz
-    cp .config ../config-linux-arm64
 fi
 cd ..
