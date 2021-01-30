@@ -6,3 +6,4 @@ hypervisor
 build/
 vmlinuz
 *.tar.gz
+/macos/linux
