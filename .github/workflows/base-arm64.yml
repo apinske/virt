@@ -13,7 +13,7 @@ jobs:
         key: cache-arm64-7
         restore-keys: cache-arm64-0
     - name: Build
-      run: cd macos && docker run -v $PWD:/root/macos ubuntu:20.10 sh -c 'cd ~/macos && ARCH=arm64 CROSS_COMPILE=aarch64-pc-linux-gnu ./build.sh' && sudo ARCH=aarch64 ./buildImage.sh && tar czf virt.tar.gz vmlinuz vda.img
+      run: cd macos && docker run -v $PWD:/root/macos ubuntu:20.10 sh -c 'cd ~/macos && ARCH=aarch64 ./build.sh' && sudo ARCH=aarch64 ./buildImage.sh && tar czf virt.tar.gz vmlinuz vda.img
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
       with:

@@ -13,8 +13,17 @@ if [ ! -d linux ]; then
     mv linux-5.10.12 linux
 fi
 cd linux
+if [ ! "$ARCH" = "$(uname -m)" ]; then
+    echo "cross compiling on $(uname -m) for $ARCH"
+    export CROSS_COMPILE=$ARCH-pc-linux-gnu
+else
+    echo "compiling on and for $ARCH"
+fi
+if [ "$ARCH" = "aarch64" ]; then
+    export ARCH=arm64
+fi
 cp ../config-linux-$ARCH .config
-make CC=clang LLVM=1 LLVM_IAS=1 -j2
+make CC=clang LLVM=1 LLVM_IAS=1 -j2 $*
 cp .config ../config-linux-$ARCH
 if [ "$ARCH" = "x86_64" ]; then
     cp arch/x86/boot/bzImage ../vmlinuz
