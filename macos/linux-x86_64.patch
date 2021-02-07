@@ -1,10 +1,24 @@
-diff -r ../../../simpleos/macos/linux/arch/x86/Makefile ./arch/x86/Makefile
-35c35
-<                  -Wall -Wstrict-prototypes -march=i386 -mregparm=3 \
----
->                  -Wall -Wstrict-prototypes --target=i386 -mregparm=3 \
-diff -r ../../../simpleos/macos/linux/arch/x86/boot/compressed/Makefile ./arch/x86/boot/compressed/Makefile                                                                                                 
-35c35                                                                                                                                                                                                       
-< cflags-$(CONFIG_X86_64) := -mcmodel=small -mno-red-zone
----
-> cflags-$(CONFIG_X86_64) := -mcmodel=small -mno-red-zone --target=x86_64-pc-linux-gnu
+diff -ur a/arch/x86/Makefile b/arch/x86/Makefile
+--- a/arch/x86/Makefile	2021-02-03 22:28:52.000000000 +0000
++++ b/arch/x86/Makefile	2021-02-07 14:09:16.570507947 +0000
+@@ -32,7 +32,7 @@
+ M16_CFLAGS	 := $(call cc-option, -m16, $(CODE16GCC_CFLAGS))
+ 
+ REALMODE_CFLAGS	:= $(M16_CFLAGS) -g -Os -DDISABLE_BRANCH_PROFILING \
+-		   -Wall -Wstrict-prototypes -march=i386 -mregparm=3 \
++		   -Wall -Wstrict-prototypes --target=i386 -mregparm=3 \
+ 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic \
+ 		   -mno-mmx -mno-sse
+ 
+diff -ur a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+--- a/arch/x86/boot/compressed/Makefile	2021-02-03 22:28:52.000000000 +0000
++++ b/arch/x86/boot/compressed/Makefile	2021-02-07 14:10:02.718712547 +0000
+@@ -32,7 +32,7 @@
+ KBUILD_CFLAGS += -fno-strict-aliasing -fPIE
+ KBUILD_CFLAGS += -DDISABLE_BRANCH_PROFILING
+ cflags-$(CONFIG_X86_32) := -march=i386
+-cflags-$(CONFIG_X86_64) := -mcmodel=small -mno-red-zone
++cflags-$(CONFIG_X86_64) := -mcmodel=small -mno-red-zone --target=x86_64-pc-linux-gnu
+ KBUILD_CFLAGS += $(cflags-y)
+ KBUILD_CFLAGS += -mno-mmx -mno-sse
+ KBUILD_CFLAGS += -ffreestanding
