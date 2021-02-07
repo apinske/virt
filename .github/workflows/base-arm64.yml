@@ -10,7 +10,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: macos/linux
-        key: cache-arm64-8
+        key: cache-arm64-9
         restore-keys: cache-arm64-0
     - name: Build
       run: cd macos && docker run -v $PWD:/root/macos ubuntu:20.10 sh -c 'cd ~/macos && ARCH=aarch64 ./build.sh' && sudo ARCH=aarch64 ./buildImage.sh && tar czf virt.tar.gz vmlinuz vda.img
