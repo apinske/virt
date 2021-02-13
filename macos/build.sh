@@ -8,9 +8,10 @@ if [ ! -d mnt ]; then
 fi
 
 if [ ! -d linux ]; then
-    wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.10.14.tar.xz
-    tar xf linux-5.10.14.tar.xz
-    mv linux-5.10.14 linux
+    linux_version=$(cat linux.version)
+    wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-$linux_version.tar.xz
+    tar xf linux-$linux_version.tar.xz
+    mv linux-$linux_version linux
     patch -d linux -p1 < linux-x86_64.patch
 fi
 cd linux
