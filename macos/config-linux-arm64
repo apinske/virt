@@ -426,10 +426,7 @@ CONFIG_CMDLINE=""
 # Power management options
 #
 # CONFIG_SUSPEND is not set
-# CONFIG_HIBERNATION is not set
 # CONFIG_PM is not set
-CONFIG_CPU_PM=y
-CONFIG_ARCH_HIBERNATION_POSSIBLE=y
 CONFIG_ARCH_SUSPEND_POSSIBLE=y
 # end of Power management options
 
@@ -440,19 +437,7 @@ CONFIG_ARCH_SUSPEND_POSSIBLE=y
 #
 # CPU Idle
 #
-CONFIG_CPU_IDLE=y
-CONFIG_CPU_IDLE_MULTIPLE_DRIVERS=y
-# CONFIG_CPU_IDLE_GOV_LADDER is not set
-CONFIG_CPU_IDLE_GOV_MENU=y
-# CONFIG_CPU_IDLE_GOV_TEO is not set
-CONFIG_DT_IDLE_STATES=y
-
-#
-# ARM CPU Idle Drivers
-#
-CONFIG_ARM_CPUIDLE=y
-# CONFIG_ARM_PSCI_CPUIDLE is not set
-# end of ARM CPU Idle Drivers
+# CONFIG_CPU_IDLE is not set
 # end of CPU Idle
 
 #
