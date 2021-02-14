@@ -64,7 +64,19 @@ config.serialPorts = [serial]
 config.entropyDevices = [VZVirtioEntropyDeviceConfiguration()]
 
 let network = VZVirtioNetworkDeviceConfiguration()
-network.macAddress = VZMACAddress(string: "0A:00:00:00:00:03")!
+if let macAddressString = try? String(contentsOfFile: ".virt.mac", encoding: .utf8),
+   let macAddress = VZMACAddress(string: macAddressString.trimmingCharacters(in: .whitespacesAndNewlines)) {
+    network.macAddress = macAddress
+} else {
+    let macAddressString = network.macAddress.string
+    NSLog("Using new MAC Address \(macAddressString)")
+    do {
+        try macAddressString.write(toFile: ".virt.mac", atomically: false, encoding: .utf8)
+    } catch {
+        NSLog("Virtual Machine Config Error: \(error)")
+        exit(2)
+    }
+}
 network.attachment = VZNATNetworkDeviceAttachment()
 config.networkDevices = [network]
 

@@ -7,3 +7,4 @@ build/
 vmlinuz
 *.tar.gz
 /macos/linux
+.virt.mac
