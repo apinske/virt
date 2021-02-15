@@ -1,18 +1,18 @@
 diff -ur a/arch/x86/Makefile b/arch/x86/Makefile
---- a/arch/x86/Makefile	2021-02-03 22:28:52.000000000 +0000
-+++ b/arch/x86/Makefile	2021-02-07 14:09:16.570507947 +0000
-@@ -32,7 +32,7 @@
- M16_CFLAGS	 := $(call cc-option, -m16, $(CODE16GCC_CFLAGS))
- 
- REALMODE_CFLAGS	:= $(M16_CFLAGS) -g -Os -DDISABLE_BRANCH_PROFILING \
+--- a/arch/x86/Makefile	2021-02-14 22:32:24.000000000 +0000
++++ b/arch/x86/Makefile	2021-02-15 19:11:59.696317934 +0000
+@@ -25,7 +25,7 @@
+ # How to compile the 16-bit code.  Note we always compile for -march=i386;
+ # that way we can complain to the user if the CPU is insufficient.
+ REALMODE_CFLAGS	:= -m16 -g -Os -DDISABLE_BRANCH_PROFILING \
 -		   -Wall -Wstrict-prototypes -march=i386 -mregparm=3 \
 +		   -Wall -Wstrict-prototypes --target=i386 -mregparm=3 \
  		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic \
  		   -mno-mmx -mno-sse
  
 diff -ur a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
---- a/arch/x86/boot/compressed/Makefile	2021-02-03 22:28:52.000000000 +0000
-+++ b/arch/x86/boot/compressed/Makefile	2021-02-07 14:10:02.718712547 +0000
+--- a/arch/x86/boot/compressed/Makefile	2021-02-14 22:32:24.000000000 +0000
++++ b/arch/x86/boot/compressed/Makefile	2021-02-15 19:11:41.632209528 +0000
 @@ -32,7 +32,7 @@
  KBUILD_CFLAGS += -fno-strict-aliasing -fPIE
  KBUILD_CFLAGS += -DDISABLE_BRANCH_PROFILING
@@ -21,4 +21,4 @@ diff -ur a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
 +cflags-$(CONFIG_X86_64) := -mcmodel=small -mno-red-zone --target=x86_64-pc-linux-gnu
  KBUILD_CFLAGS += $(cflags-y)
  KBUILD_CFLAGS += -mno-mmx -mno-sse
- KBUILD_CFLAGS += -ffreestanding
+ KBUILD_CFLAGS += -ffreestanding -fshort-wchar
