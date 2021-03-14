@@ -8,3 +8,5 @@ vmlinuz
 *.tar.gz
 /macos/linux
 .virt.mac
+/linux/x86/slash*
+/linux/x86/container
