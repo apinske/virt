@@ -11,4 +11,4 @@ jobs:
         impl: hotspot
     - uses: actions/upload-artifact@v2
       with:
-        path: build/src/build/linux-x86_64-normal-server-release/images/OpenJDK.tar.gz
+        path: /home/runner/work/simpleos/simpleos/openjdk-build/workspace/build/src/build/linux-x86_64-normal-server-release/images/OpenJDK.tar.gz
