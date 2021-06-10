@@ -9,3 +9,6 @@ jobs:
       with:
         javaToBuild: jdk11u
         impl: hotspot
+    - uses: actions/upload-artifact@v2
+      with:
+        path: build/src/build/linux-x86_64-normal-server-release/images/OpenJDK.tar.gz
