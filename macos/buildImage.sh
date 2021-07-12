@@ -1,6 +1,6 @@
 #!/bin/sh
-if [ ! -f alpine-minirootfs-3.13.2-$ARCH.tar.gz ]; then
-    wget https://dl-cdn.alpinelinux.org/alpine/v3.13/releases/$ARCH/alpine-minirootfs-3.13.2-$ARCH.tar.gz
+if [ ! -f alpine-minirootfs-3.14.0-$ARCH.tar.gz ]; then
+    wget https://dl-cdn.alpinelinux.org/alpine/v3.14/releases/$ARCH/alpine-minirootfs-3.14.0-$ARCH.tar.gz
 fi
 
 umount mnt
@@ -9,7 +9,7 @@ mkfs.ext4 vda.img
 mkdir mnt
 mount vda.img mnt
 cd mnt
-tar xf ../alpine-minirootfs-3.13.2-$ARCH.tar.gz
+tar xf ../alpine-minirootfs-3.14.0-$ARCH.tar.gz
 rm -rf etc/conf.d etc/logrotate.d etc/modprobe.d etc/modules-load.d etc/network etc/opt etc/sysctl.d lib/modules-load.d
 rm etc/modules etc/udhcpd.conf etc/sysctl.conf etc/hostname etc/motd etc/issue etc/shadow
 cp ../etc/passwd etc/passwd

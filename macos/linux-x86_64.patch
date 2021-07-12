@@ -13,8 +13,8 @@ diff -ur a/arch/x86/Makefile b/arch/x86/Makefile
 diff -ur a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
 --- a/arch/x86/boot/compressed/Makefile	2021-02-14 22:32:24.000000000 +0000
 +++ b/arch/x86/boot/compressed/Makefile	2021-02-15 19:11:41.632209528 +0000
-@@ -32,7 +32,7 @@
- KBUILD_CFLAGS += -fno-strict-aliasing -fPIE
+@@ -33,7 +33,7 @@
+ KBUILD_CFLAGS += -Wundef
  KBUILD_CFLAGS += -DDISABLE_BRANCH_PROFILING
  cflags-$(CONFIG_X86_32) := -march=i386
 -cflags-$(CONFIG_X86_64) := -mcmodel=small -mno-red-zone
