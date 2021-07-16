@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 5.13.1 Kernel Configuration
+# Linux/arm64 5.13.2 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="Ubuntu clang version 11.0.0-2"
 CONFIG_GCC_VERSION=0
@@ -1214,7 +1214,13 @@ CONFIG_VIRTIO_NET=y
 #
 # CONFIG_WLAN is not set
 # CONFIG_WAN is not set
+
+#
+# Wireless WAN
+#
 # CONFIG_WWAN is not set
+# end of Wireless WAN
+
 # CONFIG_VMXNET3 is not set
 CONFIG_NET_FAILOVER=y
 # CONFIG_ISDN is not set
