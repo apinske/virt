@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 5.13.4 Kernel Configuration
+# Linux/arm64 5.13.10 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="Ubuntu clang version 11.0.0-2"
 CONFIG_GCC_VERSION=0
@@ -457,6 +457,7 @@ CONFIG_ARCH_SUSPEND_POSSIBLE=y
 #
 # Firmware Drivers
 #
+# CONFIG_ARM_SCMI_PROTOCOL is not set
 # CONFIG_ARM_SDE_INTERFACE is not set
 # CONFIG_FW_CFG_SYSFS is not set
 # CONFIG_GOOGLE_FIRMWARE is not set
