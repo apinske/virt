@@ -7,7 +7,6 @@ else
     mkdir /var/lib/containers
     echo -e "/dev/vdb\t/var/lib/containers\text4\tdefaults\t0 0" >> /etc/fstab
     mount -a
-    echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
     apk add podman
     echo "::respawn:/usr/bin/podman system service --time=0 tcp:0.0.0.0:58080" >> /etc/inittab
     reboot
