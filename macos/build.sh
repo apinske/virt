@@ -1,7 +1,5 @@
 #!/bin/sh
 
-#doctl compute droplet create --image ubuntu-20-04-x64 --size s-1vcpu-1gb --region fra1 --ssh-keys $(doctl compute ssh-key list --format ID --no-header) --wait playground
-
 if [ ! -d mnt ]; then
    apt update
    apt install -y wget bc make clang llvm lld flex bison libelf-dev libncurses-dev libssl-dev
@@ -9,9 +7,12 @@ fi
 
 if [ ! -d linux ]; then
     linux_version=$(cat linux.version)
-    wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-$linux_version.tar.xz
-    tar xf linux-$linux_version.tar.xz
-    mv linux-$linux_version linux
+    wget -O linux.tar.xz https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-$linux_version.tar.xz
+    mkdir linux
+    cd linux
+    tar xf ../linux.tar.xz --strip-components=1
+    cd ..
+    rm linux.tar.xz
     patch -d linux -p1 < linux-x86_64.patch
 fi
 cd linux
