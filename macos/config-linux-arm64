@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 5.14.2 Kernel Configuration
+# Linux/arm64 5.14.9 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="Ubuntu clang version 11.0.0-2"
 CONFIG_GCC_VERSION=0
@@ -1462,8 +1462,6 @@ CONFIG_EDAC_SUPPORT=y
 # DMABUF options
 #
 # CONFIG_SYNC_FILE is not set
-# CONFIG_DMABUF_MOVE_NOTIFY is not set
-# CONFIG_DMABUF_DEBUG is not set
 # CONFIG_DMABUF_HEAPS is not set
 # end of DMABUF options
 
