@@ -6,3 +6,4 @@ devpts	/dev/pts	devpts	defaults	0 0
 tmpfs	/run	tmpfs	defaults	0 0
 tmpfs	/tmp	tmpfs	defaults	0 0
 tmpfs	/dev/shm	tmpfs	defaults	0 0
+fs0	/mnt	virtiofs	defaults	0 0
