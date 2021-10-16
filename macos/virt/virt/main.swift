@@ -54,6 +54,12 @@ do {
     exit(1)
 }
 
+let fs0 = VZVirtioFileSystemDeviceConfiguration(tag: "fs0")
+fs0.share = VZMultipleDirectoryShare(directories: [
+    "cwd" : VZSharedDirectory(url: URL(fileURLWithPath: "."), readOnly: false)
+])
+config.directorySharingDevices = [fs0]
+
 let serial = VZVirtioConsoleDeviceSerialPortConfiguration()
 serial.attachment = VZFileHandleSerialPortAttachment(
     fileHandleForReading: FileHandle.standardInput,
