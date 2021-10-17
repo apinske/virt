@@ -1,5 +1,6 @@
 #!/bin/sh
 hostname virt
+ip addr add 127.0.0.1/8 dev lo
 mkdir /dev/pts
 mkdir /dev/shm
 mount -a
