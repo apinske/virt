@@ -4,7 +4,7 @@ if [ ! -f /usr/local/bin/nerdctl ]; then
   wget -O- https://github.com/containerd/nerdctl/releases/download/v0.12.1/nerdctl-0.12.1-linux-arm64.tar.gz | tar xz -f- -C /usr/local/bin nerdctl
 fi
 
-apk add containerd cni-plugins
+apk add containerd cni-plugins iptables ip6tables
 
 mkdir -p /etc/cni/net.d/
 cat >/etc/cni/net.d/10-mynet.conf <<EOF
