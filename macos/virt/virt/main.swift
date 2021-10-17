@@ -56,7 +56,7 @@ do {
 
 let fs0 = VZVirtioFileSystemDeviceConfiguration(tag: "fs0")
 fs0.share = VZMultipleDirectoryShare(directories: [
-    "cwd" : VZSharedDirectory(url: URL(fileURLWithPath: "."), readOnly: false)
+    "home": VZSharedDirectory(url: FileManager.default.homeDirectoryForCurrentUser, readOnly: false),
 ])
 config.directorySharingDevices = [fs0]
 
