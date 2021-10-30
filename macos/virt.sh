@@ -1,4 +1,4 @@
 #!/bin/sh
 
 xcodebuild -project virt/virt.xcodeproj
-virt/build/Release/virt
+virt/build/Release/virt $@

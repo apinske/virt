@@ -30,12 +30,14 @@ if (access("vdb.img", F_OK) != 0) {
     }
 }
 
+let verbose = CommandLine.arguments.contains("-v")
+
 let config = VZVirtualMachineConfiguration()
 config.cpuCount = 2
 config.memorySize = 2 * 1024 * 1024 * 1024
 
 let bootloader = VZLinuxBootLoader(kernelURL: URL(fileURLWithPath: "vmlinuz"))
-bootloader.commandLine = "console=hvc0 root=/dev/vda"
+bootloader.commandLine = "console=hvc0 root=/dev/vda" + (verbose ? "" : " quiet")
 config.bootLoader = bootloader
 
 do {
@@ -95,7 +97,7 @@ do {
 
 class Delegate : NSObject, VZVirtualMachineDelegate {
     func guestDidStop(_ virtualMachine: VZVirtualMachine) {
-        NSLog("Virtual Machine Stopped")
+        if verbose { NSLog("Virtual Machine Stopped") }
         exit(0)
     }
     func virtualMachine(_ virtualMachine: VZVirtualMachine, didStopWithError error: Error) {
@@ -111,7 +113,7 @@ vm.delegate = delegate
 vm.start { result in
     switch result {
     case .success:
-        NSLog("Virtual Machine Started")
+        if verbose { NSLog("Virtual Machine Started") }
     case let .failure(error):
         NSLog("Virtual Machine Start Error: \(error)")
         exit(3)
