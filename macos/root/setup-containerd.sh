@@ -1,7 +1,16 @@
 #!/bin/sh
 
 if [ ! -f /usr/local/bin/nerdctl ]; then
-  wget -O- https://github.com/containerd/nerdctl/releases/download/v0.12.1/nerdctl-0.12.1-linux-arm64.tar.gz | tar xz -f- -C /usr/local/bin nerdctl
+  VERSION=0.12.1
+  ARCH=arm64
+  if [ "$(uname -m)" = "x86_64" ]; then
+    ARCH=amd64
+  fi
+  wget -O- https://github.com/containerd/nerdctl/releases/download/v$VERSION/nerdctl-$VERSION-linux-$ARCH.tar.gz | tar xz -f- -C /usr/local/bin nerdctl
+fi
+
+if [ "$(apk info | grep containerd)" = "containerd" ]; then
+  exit 0
 fi
 
 apk add containerd cni-plugins iptables ip6tables
@@ -33,5 +42,5 @@ cat >/etc/cni/net.d/99-loopback.conf <<EOF
 }
 EOF
 
-echo "::respawn:/usr/bin/containerd" >> /etc/inittab
+echo "::respawn:/usr/bin/containerd 2>&1 | logger -t containerd" >> /etc/inittab
 reboot
