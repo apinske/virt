@@ -13,6 +13,9 @@ if [ "$(apk info | grep containerd)" = "containerd" ]; then
   exit 0
 fi
 
+mkdir /mnt/vdb/containerd
+ln -s /mnt/vdb/containerd /var/lib/containerd
+
 apk add containerd cni-plugins iptables ip6tables
 
 mkdir -p /etc/cni/net.d/
