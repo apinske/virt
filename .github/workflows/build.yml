@@ -1,0 +1,44 @@
+name: Build
+on:
+  workflow_dispatch:
+jobs:
+  build-base:
+    strategy:
+      matrix:
+        arch: [x86_64, aarch64]
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v2
+      with:
+        path: macos/linux
+        key: cache-${{matrix.arch}}-${{ hashFiles('macos/linux.version') }}
+    - run: cd macos && docker run -v $PWD:/root/macos ubuntu:20.10 sh -c 'cd ~/macos && ARCH=${{matrix.arch}} ./build.sh' && sudo ARCH=${{matrix.arch}} ./buildImage.sh && tar czf virt.tar.gz vmlinuz vda.img
+    - uses: actions/upload-artifact@v2
+      with:
+        name: virt-${{matrix.arch}}
+        path: macos/virt.tar.gz
+  build-tool:
+    runs-on: macos-11
+    steps:
+    - uses: actions/checkout@v2
+    - run: sudo xcode-select -s /Applications/Xcode_13.1.app
+    - run: cd macos/virt && xcodebuild
+    - uses: actions/download-artifact@v2
+      with:
+        name: virt-x86_64
+        path: macos/virt/build/Release/virt.tar.gz
+    - run: cd macos/virt/build/Release && tar xf virt.tar.gz && tar cf virt.tar.gz virt vmlinuz vda.img
+    - uses: actions/upload-artifact@v2
+      with:
+        name: virt-x86_64
+        path: macos/virt/build/Release/virt.tar.gz
+    - uses: actions/download-artifact@v2
+      with:
+        name: virt-aarch64
+        path: macos/virt/build/Release/virt.tar.gz
+    - run: cd macos/virt/build/Release && tar xf virt.tar.gz && tar cf virt.tar.gz virt vmlinuz vda.img
+    - uses: actions/upload-artifact@v2
+      with:
+        name: virt-aarch64
+        path: macos/virt/build/Release/virt.tar.gz
