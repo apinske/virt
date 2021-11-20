@@ -29,7 +29,7 @@ jobs:
       with:
         name: virt-x86_64
         path: macos/virt/build/Release/virt.tar.gz
-    - run: cd macos/virt/build/Release && tar xf virt.tar.gz && tar cf virt.tar.gz virt vmlinuz vda.img
+    - run: cd macos/virt/build/Release && ls -al && tar xf virt.tar.gz && rm virt.tar.gz && tar czf virt.tar.gz virt vmlinuz vda.img
     - uses: actions/upload-artifact@v2
       with:
         name: virt-x86_64
@@ -38,7 +38,7 @@ jobs:
       with:
         name: virt-aarch64
         path: macos/virt/build/Release/virt.tar.gz
-    - run: cd macos/virt/build/Release && tar xf virt.tar.gz && tar cf virt.tar.gz virt vmlinuz vda.img
+    - run: cd macos/virt/build/Release && tar xf virt.tar.gz && tar czf virt.tar.gz virt vmlinuz vda.img
     - uses: actions/upload-artifact@v2
       with:
         name: virt-aarch64
