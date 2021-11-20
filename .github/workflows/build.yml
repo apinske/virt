@@ -19,6 +19,7 @@ jobs:
         name: virt-${{matrix.arch}}
         path: macos/virt.tar.gz
   build-tool:
+    needs: build-base
     runs-on: macos-11
     steps:
     - uses: actions/checkout@v2
