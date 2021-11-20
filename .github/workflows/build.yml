@@ -28,12 +28,12 @@ jobs:
     - uses: actions/download-artifact@v2
       with:
         name: virt-x86_64
-        path: macos/virt/build/Release/virt.tar.gz
+        path: macos/virt/build/Release
     - run: cd macos/virt/build/Release && ls -al && tar xf virt.tar.gz && rm virt.tar.gz && tar czf virt.tar.gz virt vmlinuz vda.img
     - uses: actions/upload-artifact@v2
       with:
         name: virt-x86_64
-        path: macos/virt/build/Release/virt.tar.gz
+        path: macos/virt/build/Release
     - uses: actions/download-artifact@v2
       with:
         name: virt-aarch64
