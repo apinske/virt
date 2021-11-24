@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 5.15.3 Kernel Configuration
+# Linux/arm64 5.15.4 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="Ubuntu clang version 11.0.0-2"
 CONFIG_GCC_VERSION=0
@@ -1911,7 +1911,6 @@ CONFIG_KEYS=y
 # CONFIG_SECURITYFS is not set
 CONFIG_HAVE_HARDENED_USERCOPY_ALLOCATOR=y
 # CONFIG_HARDENED_USERCOPY is not set
-# CONFIG_FORTIFY_SOURCE is not set
 # CONFIG_STATIC_USERMODEHELPER is not set
 CONFIG_DEFAULT_SECURITY_DAC=y
 CONFIG_LSM="lockdown,yama,loadpin,safesetid,integrity,bpf"
