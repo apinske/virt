@@ -8,10 +8,12 @@
 import Foundation
 import Virtualization
 
+let verbose = CommandLine.arguments.contains("-v")
+
 let tcattr = UnsafeMutablePointer<termios>.allocate(capacity: 1)
 tcgetattr(FileHandle.standardInput.fileDescriptor, tcattr)
 let oldValue = tcattr.pointee.c_lflag
-atexit {
+atexit_b {
     tcattr.pointee.c_lflag = oldValue
     tcsetattr(FileHandle.standardInput.fileDescriptor, TCSAFLUSH, tcattr)
     tcattr.deallocate()
@@ -30,31 +32,27 @@ if (access("vdb.img", F_OK) != 0) {
     }
 }
 
-let verbose = CommandLine.arguments.contains("-v")
-
 let config = VZVirtualMachineConfiguration()
 config.cpuCount = 2
 config.memorySize = 2 * 1024 * 1024 * 1024
-
-let bootloader = VZLinuxBootLoader(kernelURL: URL(fileURLWithPath: "vmlinuz"))
-bootloader.commandLine = "console=hvc0 root=/dev/vda" + (verbose ? "" : " quiet")
-config.bootLoader = bootloader
 
 do {
     let vda = try VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vda.img"), readOnly: false)
     config.storageDevices = [VZVirtioBlockDeviceConfiguration(attachment: vda)]
 } catch {
-    NSLog("Virtual Machine Primary Storage Error: \(error)")
-    exit(1)
+    fatalError("Virtual Machine Primary Storage Error: \(error)")
 }
 
 do {
     let vdb = try VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vdb.img"), readOnly: false)
     config.storageDevices += [VZVirtioBlockDeviceConfiguration(attachment: vdb)]
 } catch {
-    NSLog("Virtual Machine Secondary Storage Error: \(error)")
-    exit(1)
+    fatalError("Virtual Machine Secondary Storage Error: \(error)")
 }
+
+let bootloader = VZLinuxBootLoader(kernelURL: URL(fileURLWithPath: "vmlinuz"))
+bootloader.commandLine = "console=hvc0 root=/dev/vda" + (verbose ? "" : " quiet")
+config.bootLoader = bootloader
 
 let fs0 = VZVirtioFileSystemDeviceConfiguration(tag: "fs0")
 fs0.share = VZMultipleDirectoryShare(directories: [
@@ -81,8 +79,7 @@ if let macAddressString = try? String(contentsOfFile: ".virt.mac", encoding: .ut
     do {
         try macAddressString.write(toFile: ".virt.mac", atomically: false, encoding: .utf8)
     } catch {
-        NSLog("Virtual Machine Config Error: \(error)")
-        exit(2)
+        fatalError("Virtual Machine Config Error: \(error)")
     }
 }
 network.attachment = VZNATNetworkDeviceAttachment()
@@ -95,19 +92,8 @@ do {
     exit(2)
 }
 
-class Delegate : NSObject, VZVirtualMachineDelegate {
-    func guestDidStop(_ virtualMachine: VZVirtualMachine) {
-        if verbose { NSLog("Virtual Machine Stopped") }
-        exit(0)
-    }
-    func virtualMachine(_ virtualMachine: VZVirtualMachine, didStopWithError error: Error) {
-        NSLog("Virtual Machine Run Error: \(error)")
-        exit(4)
-    }
-}
-let delegate = Delegate()
-
 let vm = VZVirtualMachine(configuration: config)
+let delegate = Delegate()
 vm.delegate = delegate
 
 vm.start { result in
@@ -115,9 +101,18 @@ vm.start { result in
     case .success:
         if verbose { NSLog("Virtual Machine Started") }
     case let .failure(error):
-        NSLog("Virtual Machine Start Error: \(error)")
-        exit(3)
+        fatalError("Virtual Machine Start Error: \(error)")
     }
 }
 
 dispatchMain()
+
+class Delegate : NSObject, VZVirtualMachineDelegate {
+    func guestDidStop(_ virtualMachine: VZVirtualMachine) {
+        if verbose { NSLog("Virtual Machine Stopped") }
+        exit(0)
+    }
+    func virtualMachine(_ virtualMachine: VZVirtualMachine, didStopWithError error: Error) {
+        fatalError("Virtual Machine Run Error: \(error)")
+    }
+}
