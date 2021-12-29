@@ -21,7 +21,7 @@ struct virt: App {
 }
 
 struct VMScreen: NSViewRepresentable {
-    var vm: VZVirtualMachine
+    var vm: VZVirtualMachine?
 
     func makeNSView(context: Context) -> VZVirtualMachineView {
         let view = VZVirtualMachineView()
@@ -38,7 +38,9 @@ struct VMScreen: NSViewRepresentable {
 class VM : NSObject, VZVirtualMachineDelegate {
     let verbose = CommandLine.arguments.contains("-v")
     let linux = !CommandLine.arguments.contains("-m")
-    var vm: VZVirtualMachine
+    var vm: VZVirtualMachine!
+    private let config = VZVirtualMachineConfiguration()
+    private var needsInstall = false
 
     override init() {
         let tcattr = UnsafeMutablePointer<termios>.allocate(capacity: 1)
@@ -63,7 +65,6 @@ class VM : NSObject, VZVirtualMachineDelegate {
             }
         }
 
-        let config = VZVirtualMachineConfiguration()
         config.cpuCount = 2
         config.memorySize = 4 * 1024 * 1024 * 1024
 
@@ -82,10 +83,6 @@ class VM : NSObject, VZVirtualMachineDelegate {
         } catch {
             fatalError("Virtual Machine Secondary Storage Error: \(error)")
         }
-
-#if arch(arm64)
-        let mac = VZMacPlatformConfiguration()
-#endif
 
         if linux {
             let bootloader = VZLinuxBootLoader(kernelURL: URL(fileURLWithPath: "vmlinuz"))
@@ -113,11 +110,15 @@ class VM : NSObject, VZVirtualMachineDelegate {
             config.keyboards = [VZUSBKeyboardConfiguration()]
 
             config.bootLoader = VZMacOSBootLoader()
-            config.platform = mac
-
-            mac.auxiliaryStorage = VZMacAuxiliaryStorage(contentsOf: URL(fileURLWithPath: ".virt.aux"))
-            mac.hardwareModel = VZMacHardwareModel(dataRepresentation: try! Data(contentsOf: URL(fileURLWithPath: ".virt.model")))!
-            mac.machineIdentifier = VZMacMachineIdentifier(dataRepresentation: try! Data(contentsOf: URL(fileURLWithPath: ".virt.id")))!
+            if (access(".virt.aux", F_OK) != 0) {
+                needsInstall = true
+            } else {
+                let mac = VZMacPlatformConfiguration()
+                mac.auxiliaryStorage = VZMacAuxiliaryStorage(contentsOf: URL(fileURLWithPath: ".virt.aux"))
+                mac.hardwareModel = VZMacHardwareModel(dataRepresentation: try! Data(contentsOf: URL(fileURLWithPath: ".virt.model")))!
+                mac.machineIdentifier = VZMacMachineIdentifier(dataRepresentation: try! Data(contentsOf: URL(fileURLWithPath: ".virt.id")))!
+                config.platform = mac
+            }
 #else
             fatalError("not supported")
 #endif
@@ -141,17 +142,29 @@ class VM : NSObject, VZVirtualMachineDelegate {
         network.attachment = VZNATNetworkDeviceAttachment()
         config.networkDevices = [network]
 
+        super.init()
+        if needsInstall {
+            Task {
+                await self.install()
+            }
+        } else {
+            self.create()
+            self.start()
+        }
+    }
+
+    func create() {
         do {
             try config.validate()
         } catch {
-            NSLog("Virtual Machine Config Error: \(error)")
-            exit(2)
+            fatalError("Virtual Machine Config Error: \(error)")
         }
 
         vm = VZVirtualMachine(configuration: config)
-        super.init()
         vm.delegate = self
+    }
 
+    func start() {
         vm.start { result in
             switch result {
             case .success:
@@ -160,6 +173,33 @@ class VM : NSObject, VZVirtualMachineDelegate {
                 fatalError("Virtual Machine Start Error: \(error)")
             }
         }
+    }
+
+    @MainActor
+    func install() async {
+#if arch(arm64)
+        let restoreImageURL = URL(fileURLWithPath: "restore.ipsw")
+        if !FileManager.default.fileExists(atPath: restoreImageURL.path) {
+            NSLog("Downloading...")
+            let image = try! await VZMacOSRestoreImage.latestSupported
+            let (url, _) = try! await URLSession.shared.download(from: image.url)
+            try! FileManager.default.moveItem(at: url, to: restoreImageURL)
+        }
+        let image = try! await VZMacOSRestoreImage.image(from: restoreImageURL)
+        let mac = VZMacPlatformConfiguration()
+        mac.hardwareModel = image.mostFeaturefulSupportedConfiguration!.hardwareModel
+        try! mac.hardwareModel.dataRepresentation.write(to: URL(fileURLWithPath: ".virt.model"))
+        mac.auxiliaryStorage = try! VZMacAuxiliaryStorage(creatingStorageAt: URL(fileURLWithPath: ".virt.aux"), hardwareModel: mac.hardwareModel, options: [])
+        mac.machineIdentifier = VZMacMachineIdentifier()
+        try! mac.machineIdentifier.dataRepresentation.write(to: URL(fileURLWithPath: ".virt.id"))
+        config.platform = mac
+        self.create()
+        NSLog("Installing...")
+        try! await VZMacOSInstaller(virtualMachine: vm, restoringFromImageAt: restoreImageURL).install()
+        NSLog("Stopping...")
+        try! await vm.stop()
+        exit(0)
+#endif
     }
 
     func guestDidStop(_ virtualMachine: VZVirtualMachine) {

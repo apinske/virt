@@ -7,6 +7,7 @@ build/
 vmlinuz
 *.tar.gz
 /macos/linux
-.virt.mac
+.virt.*
+*.ipsw
 /linux/x86/slash*
 /linux/x86/container
