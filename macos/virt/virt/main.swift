@@ -5,11 +5,23 @@
 //  Created by Alexander Pinske on 06.12.20.
 //
 
-import Foundation
+import SwiftUI
 import Virtualization
 
-    let verbose = CommandLine.arguments.contains("-v")
+@main
+struct virt: App {
+    var vm = VM()
+    var body: some Scene {
+        WindowGroup {
+        }
+    }
+}
 
+class VM : NSObject, VZVirtualMachineDelegate {
+    let verbose = CommandLine.arguments.contains("-v")
+    var vm: VZVirtualMachine
+
+    override init() {
         let tcattr = UnsafeMutablePointer<termios>.allocate(capacity: 1)
         tcgetattr(FileHandle.standardInput.fileDescriptor, tcattr)
         let oldValue = tcattr.pointee.c_lflag
@@ -92,22 +104,20 @@ import Virtualization
             exit(2)
         }
 
-        let vm = VZVirtualMachine(configuration: config)
-        let delegate = Delegate()
-        vm.delegate = delegate
+        vm = VZVirtualMachine(configuration: config)
+        super.init()
+        vm.delegate = self
 
         vm.start { result in
             switch result {
             case .success:
-                if verbose { NSLog("Virtual Machine Started") }
+                if self.verbose { NSLog("Virtual Machine Started") }
             case let .failure(error):
                 fatalError("Virtual Machine Start Error: \(error)")
             }
         }
+    }
 
-dispatchMain()
-
-class Delegate : NSObject, VZVirtualMachineDelegate {
     func guestDidStop(_ virtualMachine: VZVirtualMachine) {
         if verbose { NSLog("Virtual Machine Stopped") }
         exit(0)
