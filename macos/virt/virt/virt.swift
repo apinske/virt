@@ -48,12 +48,12 @@ class VM : NSObject, VZVirtualMachineDelegate {
         config.cpuCount = 2
         config.memorySize = 2 * 1024 * 1024 * 1024
 
-        do {
-            let vda = try VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vda.img"), readOnly: false)
-            config.storageDevices = [VZVirtioBlockDeviceConfiguration(attachment: vda)]
-        } catch {
-            fatalError("Virtual Machine Primary Storage Error: \(error)")
-        }
+            do {
+                let vda = try VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vda.img"), readOnly: false)
+                config.storageDevices = [VZVirtioBlockDeviceConfiguration(attachment: vda)]
+            } catch {
+                fatalError("Virtual Machine Primary Storage Error: \(error)")
+            }
 
         do {
             let vdb = try VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vdb.img"), readOnly: false)
@@ -62,22 +62,22 @@ class VM : NSObject, VZVirtualMachineDelegate {
             fatalError("Virtual Machine Secondary Storage Error: \(error)")
         }
 
-        let bootloader = VZLinuxBootLoader(kernelURL: URL(fileURLWithPath: "vmlinuz"))
-        bootloader.commandLine = "console=hvc0 root=/dev/vda" + (verbose ? "" : " quiet")
-        config.bootLoader = bootloader
+            let bootloader = VZLinuxBootLoader(kernelURL: URL(fileURLWithPath: "vmlinuz"))
+            bootloader.commandLine = "console=hvc0 root=/dev/vda" + (verbose ? "" : " quiet")
+            config.bootLoader = bootloader
 
-        let fs0 = VZVirtioFileSystemDeviceConfiguration(tag: "fs0")
-        fs0.share = VZMultipleDirectoryShare(directories: [
-            "home": VZSharedDirectory(url: FileManager.default.homeDirectoryForCurrentUser, readOnly: false),
-        ])
-        config.directorySharingDevices = [fs0]
+            let fs0 = VZVirtioFileSystemDeviceConfiguration(tag: "fs0")
+            fs0.share = VZMultipleDirectoryShare(directories: [
+                "home": VZSharedDirectory(url: FileManager.default.homeDirectoryForCurrentUser, readOnly: false),
+            ])
+            config.directorySharingDevices = [fs0]
 
-        let serial = VZVirtioConsoleDeviceSerialPortConfiguration()
-        serial.attachment = VZFileHandleSerialPortAttachment(
-            fileHandleForReading: FileHandle.standardInput,
-            fileHandleForWriting: FileHandle.standardOutput
-        )
-        config.serialPorts = [serial]
+            let serial = VZVirtioConsoleDeviceSerialPortConfiguration()
+            serial.attachment = VZFileHandleSerialPortAttachment(
+                fileHandleForReading: FileHandle.standardInput,
+                fileHandleForWriting: FileHandle.standardOutput
+            )
+            config.serialPorts = [serial]
 
         config.entropyDevices = [VZVirtioEntropyDeviceConfiguration()]
 
