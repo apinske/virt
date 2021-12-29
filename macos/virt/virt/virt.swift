@@ -13,12 +13,31 @@ struct virt: App {
     var vm = VM()
     var body: some Scene {
         WindowGroup {
+            if !vm.linux {
+                VMScreen(vm: vm.vm)
+            }
         }
+    }
+}
+
+struct VMScreen: NSViewRepresentable {
+    var vm: VZVirtualMachine
+
+    func makeNSView(context: Context) -> VZVirtualMachineView {
+        let view = VZVirtualMachineView()
+        view.capturesSystemKeys = true
+        return view
+    }
+
+    func updateNSView(_ view: VZVirtualMachineView, context: Context) {
+        view.virtualMachine = vm
+        view.window?.makeFirstResponder(view)
     }
 }
 
 class VM : NSObject, VZVirtualMachineDelegate {
     let verbose = CommandLine.arguments.contains("-v")
+    let linux = !CommandLine.arguments.contains("-m")
     var vm: VZVirtualMachine
 
     override init() {
@@ -38,7 +57,7 @@ class VM : NSObject, VZVirtualMachineDelegate {
                 perror("create vdb.img")
                 exit(1)
             }
-            if (truncate("vdb.img", 10 * 1024 * 1024 * 1024) != 0) {
+            if (truncate("vdb.img", 64 * 1024 * 1024 * 1024) != 0) {
                 perror("resize vdb.img")
                 exit(1)
             }
@@ -46,14 +65,16 @@ class VM : NSObject, VZVirtualMachineDelegate {
 
         let config = VZVirtualMachineConfiguration()
         config.cpuCount = 2
-        config.memorySize = 2 * 1024 * 1024 * 1024
+        config.memorySize = 4 * 1024 * 1024 * 1024
 
+        if linux {
             do {
                 let vda = try VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vda.img"), readOnly: false)
                 config.storageDevices = [VZVirtioBlockDeviceConfiguration(attachment: vda)]
             } catch {
                 fatalError("Virtual Machine Primary Storage Error: \(error)")
             }
+        }
 
         do {
             let vdb = try VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vdb.img"), readOnly: false)
@@ -62,6 +83,11 @@ class VM : NSObject, VZVirtualMachineDelegate {
             fatalError("Virtual Machine Secondary Storage Error: \(error)")
         }
 
+#if arch(arm64)
+        let mac = VZMacPlatformConfiguration()
+#endif
+
+        if linux {
             let bootloader = VZLinuxBootLoader(kernelURL: URL(fileURLWithPath: "vmlinuz"))
             bootloader.commandLine = "console=hvc0 root=/dev/vda" + (verbose ? "" : " quiet")
             config.bootLoader = bootloader
@@ -78,6 +104,24 @@ class VM : NSObject, VZVirtualMachineDelegate {
                 fileHandleForWriting: FileHandle.standardOutput
             )
             config.serialPorts = [serial]
+        } else {
+#if arch(arm64)
+            let video = VZMacGraphicsDeviceConfiguration()
+            video.displays = [VZMacGraphicsDisplayConfiguration(widthInPixels: 1024, heightInPixels: 768, pixelsPerInch: 80)]
+            config.graphicsDevices = [video]
+            config.pointingDevices = [VZUSBScreenCoordinatePointingDeviceConfiguration()]
+            config.keyboards = [VZUSBKeyboardConfiguration()]
+
+            config.bootLoader = VZMacOSBootLoader()
+            config.platform = mac
+
+            mac.auxiliaryStorage = VZMacAuxiliaryStorage(contentsOf: URL(fileURLWithPath: ".virt.aux"))
+            mac.hardwareModel = VZMacHardwareModel(dataRepresentation: try! Data(contentsOf: URL(fileURLWithPath: ".virt.model")))!
+            mac.machineIdentifier = VZMacMachineIdentifier(dataRepresentation: try! Data(contentsOf: URL(fileURLWithPath: ".virt.id")))!
+#else
+            fatalError("not supported")
+#endif
+        }
 
         config.entropyDevices = [VZVirtioEntropyDeviceConfiguration()]
 
