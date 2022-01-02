@@ -2,7 +2,7 @@
 
 if [ ! -d mnt ]; then
    apt update
-   apt install -y wget xz-utils patch bc make clang-11 llvm-11 lld-11 flex bison libelf-dev libncurses-dev libssl-dev
+   apt install -y wget xz-utils patch bc make clang llvm lld flex bison libelf-dev libncurses-dev libssl-dev
 fi
 
 if [ ! -d linux ]; then
