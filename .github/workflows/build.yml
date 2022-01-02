@@ -13,7 +13,7 @@ jobs:
       with:
         path: macos/linux
         key: cache-${{matrix.arch}}-${{ hashFiles('macos/linux.version') }}
-    - run: cd macos && docker run -v $PWD:/root/macos ubuntu:20.10 sh -c 'cd ~/macos && ARCH=${{matrix.arch}} ./build.sh' && sudo ARCH=${{matrix.arch}} ./buildImage.sh && tar czf virt.tar.gz vmlinuz vda.img
+    - run: cd macos && docker run -v $PWD:/root/macos ubuntu:21.10 sh -c 'cd ~/macos && ARCH=${{matrix.arch}} ./build.sh' && sudo ARCH=${{matrix.arch}} ./buildImage.sh && tar czf virt.tar.gz vmlinuz vda.img
     - uses: actions/upload-artifact@v2
       with:
         name: virt-${{matrix.arch}}
