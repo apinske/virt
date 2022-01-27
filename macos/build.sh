@@ -13,7 +13,6 @@ if [ ! -d linux ]; then
     tar xf ../linux.tar.xz --strip-components=1
     cd ..
     rm linux.tar.xz
-    patch -d linux -p1 < linux.patch
 fi
 cd linux
 if [ ! "$ARCH" = "$(uname -m)" ]; then
