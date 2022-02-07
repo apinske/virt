@@ -2,6 +2,7 @@
 hostname virt
 ip addr add 127.0.0.1/8 dev lo
 ip link set lo up
+ip link set eth0 up
 mkdir /dev/pts
 mkdir /dev/shm
 mount -a
