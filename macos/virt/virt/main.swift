@@ -204,7 +204,7 @@ if !installing {
 }
 #endif
 
-if linux {
+if linux || installing {
     dispatchMain()
 } else {
     NSApplication.shared.setActivationPolicy(.regular)
