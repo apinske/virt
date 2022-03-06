@@ -11,36 +11,36 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/cache@v2
       with:
-        path: macos/linux
-        key: cache-${{matrix.arch}}-${{ hashFiles('macos/linux.version') }}
-    - run: cd macos && docker run -v $PWD:/root/macos ubuntu:21.10 sh -c 'cd ~/macos && ARCH=${{matrix.arch}} ./build.sh' && sudo ARCH=${{matrix.arch}} ./buildImage.sh && tar czf virt.tar.gz vmlinuz vda.img
+        path: linux
+        key: cache-${{matrix.arch}}-${{ hashFiles('linux.version') }}
+    - run: docker run -v $PWD:/root/virt ubuntu:21.10 sh -c 'cd ~/virt && ARCH=${{matrix.arch}} ./build.sh' && sudo ARCH=${{matrix.arch}} ./buildImage.sh && tar czf virt.tar.gz vmlinuz vda.img
     - uses: actions/upload-artifact@v2
       with:
         name: virt-${{matrix.arch}}
-        path: macos/virt.tar.gz
+        path: virt.tar.gz
   build-tool:
     needs: build-base
     runs-on: macos-11
     steps:
     - uses: actions/checkout@v2
     - run: sudo xcode-select -s /Applications/Xcode_13.2.1.app
-    - run: cd macos/virt && xcodebuild
+    - run: cd virt && xcodebuild
     - uses: actions/download-artifact@v2
       with:
         name: virt-x86_64
-        path: macos/virt/build/Release
-    - run: cd macos/virt/build/Release && tar xf virt.tar.gz && tar czf virt.tar.gz virt vmlinuz vda.img
+        path: virt/build/Release
+    - run: cd virt/build/Release && tar xf virt.tar.gz && tar czf virt.tar.gz virt vmlinuz vda.img
     - uses: actions/upload-artifact@v2
       with:
         name: virt-x86_64
-        path: macos/virt/build/Release/virt.tar.gz
-    - run: rm macos/virt/build/Release/virt.tar.gz
+        path: virt/build/Release/virt.tar.gz
+    - run: rm virt/build/Release/virt.tar.gz
     - uses: actions/download-artifact@v2
       with:
         name: virt-aarch64
-        path: macos/virt/build/Release
-    - run: cd macos/virt/build/Release && tar xf virt.tar.gz && tar czf virt.tar.gz virt vmlinuz vda.img
+        path: virt/build/Release
+    - run: cd virt/build/Release && tar xf virt.tar.gz && tar czf virt.tar.gz virt vmlinuz vda.img
     - uses: actions/upload-artifact@v2
       with:
         name: virt-aarch64
-        path: macos/virt/build/Release/virt.tar.gz
+        path: virt/build/Release/virt.tar.gz
