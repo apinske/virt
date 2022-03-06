@@ -1,13 +1,8 @@
 *.img
-*.bin
-*.o
-hypervisor
 *.xcuserstate
 build/
 vmlinuz
 *.tar.gz
-/macos/linux
+/linux
 .virt.*
 *.ipsw
-/linux/x86/slash*
-/linux/x86/container
