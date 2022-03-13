@@ -1,0 +1,26 @@
+diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+index a77b5f49b..394b2d9b2 100644
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@ -658,7 +658,7 @@ static inline bool supports_clearbhb(int scope)
+ 	u64 isar2;
+ 
+ 	if (scope == SCOPE_LOCAL_CPU)
+-		isar2 = read_sysreg_s(SYS_ID_AA64ISAR2_EL1);
++		isar2 = 0; //read_sysreg_s(SYS_ID_AA64ISAR2_EL1);
+ 	else
+ 		isar2 = read_sanitised_ftr_reg(SYS_ID_AA64ISAR2_EL1);
+ 
+diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
+index 591c18a88..9795c0c3d 100644
+--- a/arch/arm64/kernel/cpuinfo.c
++++ b/arch/arm64/kernel/cpuinfo.c
+@@ -393,7 +393,7 @@ static void __cpuinfo_store_cpu(struct cpuinfo_arm64 *info)
+ 	info->reg_id_aa64dfr1 = read_cpuid(ID_AA64DFR1_EL1);
+ 	info->reg_id_aa64isar0 = read_cpuid(ID_AA64ISAR0_EL1);
+ 	info->reg_id_aa64isar1 = read_cpuid(ID_AA64ISAR1_EL1);
+-	info->reg_id_aa64isar2 = read_cpuid(ID_AA64ISAR2_EL1);
++	//info->reg_id_aa64isar2 = read_cpuid(ID_AA64ISAR2_EL1);
+ 	info->reg_id_aa64mmfr0 = read_cpuid(ID_AA64MMFR0_EL1);
+ 	info->reg_id_aa64mmfr1 = read_cpuid(ID_AA64MMFR1_EL1);
+ 	info->reg_id_aa64mmfr2 = read_cpuid(ID_AA64MMFR2_EL1);
