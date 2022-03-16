@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 5.15.28 Kernel Configuration
+# Linux/arm64 5.15.29 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="Ubuntu clang version 11.0.0-2"
 CONFIG_GCC_VERSION=0
@@ -353,7 +353,6 @@ CONFIG_HZ_100=y
 # CONFIG_HZ_1000 is not set
 CONFIG_HZ=100
 CONFIG_ARCH_SPARSEMEM_ENABLE=y
-CONFIG_ARCH_HAS_FILTER_PGPROT=y
 CONFIG_CC_HAVE_SHADOW_CALL_STACK=y
 CONFIG_PARAVIRT=y
 # CONFIG_PARAVIRT_TIME_ACCOUNTING is not set
