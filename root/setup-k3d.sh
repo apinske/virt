@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ ! -f /usr/local/bin/k3d ]; then
-  VERSION=5.3.0
+  VERSION=5.4.1
   ARCH=arm64
   if [ "$(uname -m)" = "x86_64" ]; then
     ARCH=amd64
