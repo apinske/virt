@@ -6,14 +6,14 @@ jobs:
     strategy:
       matrix:
         arch: [x86_64, aarch64]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - uses: actions/cache@v2
       with:
         path: linux
         key: cache-${{matrix.arch}}-${{ hashFiles('linux.version') }}
-    - run: docker run -v $PWD:/root/virt ubuntu:21.10 sh -c 'cd ~/virt && ARCH=${{matrix.arch}} ./build.sh' && sudo ARCH=${{matrix.arch}} ./buildImage.sh && tar czf virt.tar.gz vmlinuz vda.img
+    - run: docker run -v $PWD:/root/virt ubuntu:22.04 sh -c 'cd ~/virt && ARCH=${{matrix.arch}} ./build.sh' && sudo ARCH=${{matrix.arch}} ./buildImage.sh && tar czf virt.tar.gz vmlinuz vda.img
     - uses: actions/upload-artifact@v2
       with:
         name: virt-${{matrix.arch}}
@@ -23,7 +23,6 @@ jobs:
     runs-on: macos-11
     steps:
     - uses: actions/checkout@v2
-    - run: sudo xcode-select -s /Applications/Xcode_13.2.1.app
     - run: cd virt && xcodebuild
     - uses: actions/download-artifact@v2
       with:
