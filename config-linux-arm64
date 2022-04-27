@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 5.15.35 Kernel Configuration
+# Linux/arm64 5.15.36 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="Ubuntu clang version 14.0.0-1ubuntu1"
 CONFIG_GCC_VERSION=0
@@ -550,7 +550,6 @@ CONFIG_HAVE_ARCH_PREL32_RELOCATIONS=y
 CONFIG_ARCH_HAS_RELR=y
 CONFIG_RELR=y
 CONFIG_ARCH_WANT_LD_ORPHAN_WARN=y
-CONFIG_HAVE_ARCH_PFN_VALID=y
 CONFIG_ARCH_SUPPORTS_DEBUG_PAGEALLOC=y
 
 #
