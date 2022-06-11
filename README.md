@@ -24,8 +24,3 @@ small Linux VM, ready to run containers, for macOS (x86 and arm)
 
 ### Hypervisor
 * based on Apple Virtualization.framework
-
-## macOS VM (arm only)
-* `curl -Lo virt https://github.com/apinske/virt/releases/download/v0.5/virt`
-* `chmod +x ./virt`
-* `./virt -m`

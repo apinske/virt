@@ -9,67 +9,6 @@ import SwiftUI
 import Virtualization
 
 let verbose = CommandLine.arguments.contains("-v")
-let linux = !CommandLine.arguments.contains("-m")
-var vm: VZVirtualMachine!
-
-struct VMApp: App {
-    var body: some Scene {
-        WindowGroup {
-            VMScreen(vm: vm)
-        }
-    }
-}
-
-struct VMScreen: NSViewRepresentable {
-    let vm: VZVirtualMachine?
-
-    func makeNSView(context: Context) -> VZVirtualMachineView {
-        let view = VZVirtualMachineView()
-        view.capturesSystemKeys = true
-        return view
-    }
-
-    func updateNSView(_ view: VZVirtualMachineView, context: Context) {
-        view.virtualMachine = vm
-        view.window?.makeFirstResponder(view)
-    }
-}
-
-class VMDelegate : NSObject, VZVirtualMachineDelegate {
-    func guestDidStop(_ virtualMachine: VZVirtualMachine) {
-        if verbose { NSLog("Virtual Machine Stopped") }
-        exit(0)
-    }
-
-    func virtualMachine(_ virtualMachine: VZVirtualMachine, didStopWithError error: Error) {
-        fatalError("Virtual Machine Run Error: \(error)")
-    }
-}
-let delegate = VMDelegate()
-
-func create() {
-    do {
-        try config.validate()
-    } catch {
-        fatalError("Virtual Machine Config Error: \(error)")
-    }
-    vm = VZVirtualMachine(configuration: config)
-    vm.delegate = delegate
-}
-
-func start() {
-    vm.start { result in
-        switch result {
-        case .success:
-            if verbose { NSLog("Virtual Machine Started") }
-        case let .failure(error):
-            fatalError("Virtual Machine Start Error: \(error)")
-        }
-    }
-}
-
-let config = VZVirtualMachineConfiguration()
-var installing = false
 
 let tcattr = UnsafeMutablePointer<termios>.allocate(capacity: 1)
 tcgetattr(FileHandle.standardInput.fileDescriptor, tcattr)
@@ -87,29 +26,22 @@ if (access("vdb.img", F_OK) != 0) {
         perror("create vdb.img")
         exit(1)
     }
-    if (truncate("vdb.img", 64 * 1024 * 1024 * 1024) != 0) {
+    if (truncate("vdb.img", 16 * 1024 * 1024 * 1024) != 0) {
         perror("resize vdb.img")
         exit(1)
     }
 }
 
+let config = VZVirtualMachineConfiguration()
 config.cpuCount = 2
 config.memorySize = 4 * 1024 * 1024 * 1024
 
-if linux {
-    do {
-        let vda = try VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vda.img"), readOnly: false)
-        config.storageDevices = [VZVirtioBlockDeviceConfiguration(attachment: vda)]
-    } catch {
-        fatalError("Virtual Machine Primary Storage Error: \(error)")
-    }
-}
-
 do {
+    let vda = try VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vda.img"), readOnly: false)
     let vdb = try VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vdb.img"), readOnly: false)
-    config.storageDevices += [VZVirtioBlockDeviceConfiguration(attachment: vdb)]
+    config.storageDevices = [VZVirtioBlockDeviceConfiguration(attachment: vda), VZVirtioBlockDeviceConfiguration(attachment: vdb)]
 } catch {
-    fatalError("Virtual Machine Secondary Storage Error: \(error)")
+    fatalError("Virtual Machine Storage Error: \(error)")
 }
 
 config.entropyDevices = [VZVirtioEntropyDeviceConfiguration()]
@@ -130,83 +62,47 @@ if let macAddressString = try? String(contentsOfFile: ".virt.mac", encoding: .ut
 network.attachment = VZNATNetworkDeviceAttachment()
 config.networkDevices = [network]
 
-if linux {
-    let bootloader = VZLinuxBootLoader(kernelURL: URL(fileURLWithPath: "vmlinuz"))
-    bootloader.commandLine = "console=hvc0 root=/dev/vda" + (verbose ? "" : " quiet")
-    config.bootLoader = bootloader
+let bootloader = VZLinuxBootLoader(kernelURL: URL(fileURLWithPath: "vmlinuz"))
+bootloader.commandLine = "console=hvc0 root=/dev/vda" + (verbose ? "" : " quiet")
+config.bootLoader = bootloader
 
-    let fs0 = VZVirtioFileSystemDeviceConfiguration(tag: "fs0")
-    fs0.share = VZMultipleDirectoryShare(directories: [
-        "home": VZSharedDirectory(url: FileManager.default.homeDirectoryForCurrentUser, readOnly: false),
-    ])
-    config.directorySharingDevices = [fs0]
+let fs0 = VZVirtioFileSystemDeviceConfiguration(tag: "fs0")
+fs0.share = VZMultipleDirectoryShare(directories: [
+    "home": VZSharedDirectory(url: FileManager.default.homeDirectoryForCurrentUser, readOnly: false),
+])
+config.directorySharingDevices = [fs0]
 
-    let serial = VZVirtioConsoleDeviceSerialPortConfiguration()
-    serial.attachment = VZFileHandleSerialPortAttachment(
-        fileHandleForReading: FileHandle.standardInput,
-        fileHandleForWriting: FileHandle.standardOutput
-    )
-    config.serialPorts = [serial]
-} else {
-#if arch(arm64)
-    let video = VZMacGraphicsDeviceConfiguration()
-    video.displays = [VZMacGraphicsDisplayConfiguration(widthInPixels: 1024, heightInPixels: 768, pixelsPerInch: 80)]
-    config.graphicsDevices = [video]
-    config.pointingDevices = [VZUSBScreenCoordinatePointingDeviceConfiguration()]
-    config.keyboards = [VZUSBKeyboardConfiguration()]
+let serial = VZVirtioConsoleDeviceSerialPortConfiguration()
+serial.attachment = VZFileHandleSerialPortAttachment(
+    fileHandleForReading: FileHandle.standardInput,
+    fileHandleForWriting: FileHandle.standardOutput
+)
+config.serialPorts = [serial]
 
-    config.bootLoader = VZMacOSBootLoader()
-    if (access(".virt.aux", F_OK) != 0) {
-        installing = true
-        Task {
-            await install()
-        }
-    } else {
-        let mac = VZMacPlatformConfiguration()
-        mac.auxiliaryStorage = VZMacAuxiliaryStorage(contentsOf: URL(fileURLWithPath: ".virt.aux"))
-        mac.hardwareModel = VZMacHardwareModel(dataRepresentation: try! Data(contentsOf: URL(fileURLWithPath: ".virt.model")))!
-        mac.machineIdentifier = VZMacMachineIdentifier(dataRepresentation: try! Data(contentsOf: URL(fileURLWithPath: ".virt.id")))!
-        config.platform = mac
+do {
+    try config.validate()
+} catch {
+    fatalError("Virtual Machine Config Error: \(error)")
+}
+let vm = VZVirtualMachine(configuration: config)
+class VMDelegate : NSObject, VZVirtualMachineDelegate {
+    func guestDidStop(_ virtualMachine: VZVirtualMachine) {
+        if verbose { NSLog("Virtual Machine Stopped") }
+        exit(0)
     }
-#else
-    fatalError("not supported")
-#endif
-}
 
-if !installing {
-    create()
-    start()
-}
-
-#if arch(arm64)
-@MainActor func install() async {
-    let restoreImageURL = URL(fileURLWithPath: "restore.ipsw")
-    if !FileManager.default.fileExists(atPath: restoreImageURL.path) {
-        NSLog("Downloading...")
-        let image = try! await VZMacOSRestoreImage.latestSupported
-        let (url, _) = try! await URLSession.shared.download(from: image.url)
-        try! FileManager.default.moveItem(at: url, to: restoreImageURL)
+    func virtualMachine(_ virtualMachine: VZVirtualMachine, didStopWithError error: Error) {
+        fatalError("Virtual Machine Run Error: \(error)")
     }
-    let image = try! await VZMacOSRestoreImage.image(from: restoreImageURL)
-    let mac = VZMacPlatformConfiguration()
-    mac.hardwareModel = image.mostFeaturefulSupportedConfiguration!.hardwareModel
-    try! mac.hardwareModel.dataRepresentation.write(to: URL(fileURLWithPath: ".virt.model"))
-    mac.auxiliaryStorage = try! VZMacAuxiliaryStorage(creatingStorageAt: URL(fileURLWithPath: ".virt.aux"), hardwareModel: mac.hardwareModel, options: [])
-    mac.machineIdentifier = VZMacMachineIdentifier()
-    try! mac.machineIdentifier.dataRepresentation.write(to: URL(fileURLWithPath: ".virt.id"))
-    config.platform = mac
-    create()
-    NSLog("Installing...")
-    try! await VZMacOSInstaller(virtualMachine: vm, restoringFromImageAt: restoreImageURL).install()
-    NSLog("Stopping...")
-    try! await vm.stop()
-    exit(0)
 }
-#endif
-
-if linux || installing {
-    dispatchMain()
-} else {
-    NSApplication.shared.setActivationPolicy(.regular)
-    VMApp.main()
+let delegate = VMDelegate()
+vm.delegate = delegate
+vm.start { result in
+    switch result {
+    case .success:
+        if verbose { NSLog("Virtual Machine Started") }
+    case let .failure(error):
+        fatalError("Virtual Machine Start Error: \(error)")
+    }
 }
+dispatchMain()
