@@ -72,6 +72,14 @@ fs0.share = VZMultipleDirectoryShare(directories: [
 ])
 config.directorySharingDevices = [fs0]
 
+#if arch(arm64) && compiler(>=5.7)
+if VZLinuxRosettaDirectoryShare.availability == .installed {
+    let rosetta = VZVirtioFileSystemDeviceConfiguration(tag: "rosetta")
+    rosetta.share = try VZLinuxRosettaDirectoryShare()
+    config.directorySharingDevices += [rosetta]
+}
+#endif
+
 let serial = VZVirtioConsoleDeviceSerialPortConfiguration()
 serial.attachment = VZFileHandleSerialPortAttachment(
     fileHandleForReading: FileHandle.standardInput,
