@@ -6,8 +6,7 @@ if [ ! -d mnt ]; then
 fi
 
 if [ ! -d linux ]; then
-    linux_version=$(cat linux.version)
-    wget -O linux.tar.xz https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-$linux_version.tar.xz
+    wget -O linux.tar.xz https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-$(cat linux.version).tar.xz
     mkdir linux
     cd linux
     tar xf ../linux.tar.xz --strip-components=1
@@ -15,21 +14,12 @@ if [ ! -d linux ]; then
     rm linux.tar.xz
 fi
 cd linux
-if [ ! "$ARCH" = "$(uname -m)" ]; then
-    echo "cross compiling on $(uname -m) for $ARCH"
-    export CROSS_COMPILE=$ARCH-pc-linux-gnu
-else
-    echo "compiling on and for $ARCH"
+cp ../linux.config .config
+if [ ! "aarch64" = "$(uname -m)" ]; then
+    echo "cross compiling on $(uname -m)"
+    export CROSS_COMPILE=aarch64-pc-linux-gnu
 fi
-if [ "$ARCH" = "aarch64" ]; then
-    export ARCH=arm64
-fi
-cp ../config-linux-$ARCH .config
-make CC=clang LLVM=1 LLVM_IAS=1 -j2 $*
-cp .config ../config-linux-$ARCH
-if [ "$ARCH" = "x86_64" ]; then
-    cp arch/x86/boot/bzImage ../vmlinuz
-else
-    cp arch/arm64/boot/Image ../vmlinuz
-fi
+ARCH=arm64 make CC=clang LLVM=1 LLVM_IAS=1 -j2 $*
+cp .config ../linux.config
+cp arch/arm64/boot/Image ../vmlinuz
 cd ..
