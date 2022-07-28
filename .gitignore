@@ -4,5 +4,4 @@ build/
 vmlinuz
 *.tar.gz
 /linux
-.virt.*
-*.ipsw
+.virt.mac
