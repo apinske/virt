@@ -1,12 +1,7 @@
 #!/bin/sh
 
 if [ ! -f /usr/local/bin/k3d ]; then
-  VERSION=5.4.1
-  ARCH=arm64
-  if [ "$(uname -m)" = "x86_64" ]; then
-    ARCH=amd64
-  fi
-  wget -O /usr/local/bin/k3d https://github.com/rancher/k3d/releases/download/v$VERSION/k3d-linux-$ARCH
+  wget -O /usr/local/bin/k3d https://github.com/k3d-io/k3d/releases/download/v5.4.4/k3d-linux-arm64
   chmod +x /usr/local/bin/k3d
 fi
 
