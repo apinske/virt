@@ -5,7 +5,6 @@
 //  Created by Alexander Pinske on 06.12.20.
 //
 
-import SwiftUI
 import Virtualization
 
 let verbose = CommandLine.arguments.contains("-v")
@@ -72,7 +71,7 @@ fs0.share = VZMultipleDirectoryShare(directories: [
 ])
 config.directorySharingDevices = [fs0]
 
-#if arch(arm64) && compiler(>=5.7)
+#if compiler(>=5.7)
 if VZLinuxRosettaDirectoryShare.availability == .installed {
     let rosetta = VZVirtioFileSystemDeviceConfiguration(tag: "rosetta")
     rosetta.share = try VZLinuxRosettaDirectoryShare()
