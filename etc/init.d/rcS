@@ -6,6 +6,7 @@ ip link set eth0 up
 mkdir /dev/pts
 mkdir /dev/shm
 mount -a
+ln -s /proc/self/fd/0 /dev/stdin
 mount -o rw,remount / | logger -t mount
 /sbin/syslogd
 /sbin/klogd
