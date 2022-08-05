@@ -5,4 +5,9 @@ if [ ! -f /usr/local/bin/k3d ]; then
   chmod +x /usr/local/bin/k3d
 fi
 
-k3d cluster create --network podman --k3s-arg --flannel-backend=none@server:*
+if [ ! -f /usr/local/bin/kubectl ]; then
+  wget -O /usr/local/bin/kubectl https://dl.k8s.io/release/v1.24.3/bin/linux/arm64/kubectl
+  chmod +x /usr/local/bin/kubectl
+fi
+
+k3d cluster create -a 1
