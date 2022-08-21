@@ -13,6 +13,9 @@ small Linux VM, ready to run containers, for macOS on ARM
   * `./setup-k3d.sh`
     * to test: `kubectl create deployment nginx --image nginx`
   * $HOME is mounted at /mnt/virt/home
+* ssh
+  * `apk add dropbear && reboot`
+  * `ssh root@$(ndp -an | grep $(cat .virt.mac) | awk '{print $1}')`
 
 ## Components
 ### Kernel
