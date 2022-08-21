@@ -5,4 +5,3 @@ kill $(cat /var/run/udhcpc.pid)
 kill $(cat /var/run/klogd.pid)
 kill $(cat /var/run/syslogd.pid)
 mount -o ro,remount /
-for m in $(cat /etc/fstab | cut -f2 | tac); do umount $m; done
