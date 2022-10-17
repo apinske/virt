@@ -71,7 +71,7 @@ fs0.share = VZMultipleDirectoryShare(directories: [
 ])
 config.directorySharingDevices = [fs0]
 
-#if compiler(>=5.7)
+#if compiler(>=5.7.1)
 if VZLinuxRosettaDirectoryShare.availability == .installed {
     let rosetta = VZVirtioFileSystemDeviceConfiguration(tag: "rosetta")
     rosetta.share = try VZLinuxRosettaDirectoryShare()
