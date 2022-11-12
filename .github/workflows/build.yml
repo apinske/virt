@@ -3,21 +3,21 @@ on:
   workflow_dispatch:
 jobs:
   build-base:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04 #https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md
     steps:
     - uses: actions/checkout@v2
     - uses: actions/cache@v2
       with:
         path: linux
         key: cache-${{ hashFiles('linux.version') }}
-    - run: docker run -v $PWD:/root/virt ubuntu:22.04 sh -c 'cd ~/virt && ./build.sh' && sudo ./buildImage.sh && tar czf virt.tar.gz vmlinuz vda.img
+    - run: ./build.sh && sudo ./buildImage.sh && tar czf virt.tar.gz vmlinuz vda.img
     - uses: actions/upload-artifact@v2
       with:
         name: virt
         path: virt.tar.gz
   build-tool:
     needs: build-base
-    runs-on: macos-12
+    runs-on: macos-12 #https://github.com/actions/runner-images/blob/main/images/macos/macos-12-Readme.md
     steps:
     - uses: actions/checkout@v2
     - run: sudo xcode-select -s /Applications/Xcode_14.1.app
