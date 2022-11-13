@@ -6,12 +6,12 @@ jobs:
     runs-on: ubuntu-22.04 #https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       with:
         path: linux
         key: cache-${{ hashFiles('linux.version') }}
     - run: ./build.sh && sudo ./buildImage.sh && tar czf virt.tar.gz vmlinuz vda.img
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: virt
         path: virt.tar.gz
@@ -22,12 +22,12 @@ jobs:
     - uses: actions/checkout@v2
     - run: sudo xcode-select -s /Applications/Xcode_14.1.app
     - run: cd virt && xcodebuild -arch arm64
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
       with:
         name: virt
         path: virt/build/Release
     - run: cd virt/build/Release && tar xf virt.tar.gz && tar czf virt.tar.gz virt vmlinuz vda.img
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: virt
         path: virt/build/Release/virt.tar.gz
