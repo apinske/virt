@@ -3,7 +3,7 @@ small Linux VM, ready to run containers, for macOS on ARM
 
 ## Usage
 * on macOS
-  * `curl -Lo- https://github.com/apinske/virt/releases/download/v0.8/virt.tar.gz | tar xzf -`
+  * `curl -Lo- https://github.com/apinske/virt/releases/download/v0.9/virt.tar.gz | tar xzf -`
   * `./virt`
 * in VM
   * `apk upgrade`
