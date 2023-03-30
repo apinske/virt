@@ -10,4 +10,5 @@ if [ ! -f /usr/local/bin/kubectl ]; then
   chmod +x /usr/local/bin/kubectl
 fi
 
-k3d cluster create --network podman --k3s-arg --flannel-backend=host-gw@server:* --env IPTABLES_MODE=legacy@server:* --no-lb --api-port 127.0.0.1:6443
+podman network create k3d
+k3d cluster create --network k3d --k3s-arg --flannel-backend=host-gw@server:* --env IPTABLES_MODE=legacy@server:* --no-lb --api-port 127.0.0.1:6443
