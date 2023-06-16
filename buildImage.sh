@@ -1,6 +1,6 @@
 #!/bin/sh
 if [ ! -f alpine-minirootfs.tar.gz ]; then
-    wget -O alpine-minirootfs.tar.gz https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/aarch64/alpine-minirootfs-3.18.0-aarch64.tar.gz
+    wget -O alpine-minirootfs.tar.gz https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/aarch64/alpine-minirootfs-3.18.2-aarch64.tar.gz
 fi
 
 umount mnt
