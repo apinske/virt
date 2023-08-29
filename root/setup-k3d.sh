@@ -12,4 +12,4 @@ if [ ! -f /usr/local/bin/kubectl ]; then
 fi
 
 podman network create k3d
-k3d cluster create --network k3d --k3s-arg --flannel-backend=host-gw@server:* --env IPTABLES_MODE=legacy@server:* --api-port 127.0.0.1:6443 --port 127.0.0.1:80:80/tcp@server:* --port 127.0.0.1:443:443/tcp@server:*
+k3d cluster create --network k3d --k3s-arg --flannel-backend=host-gw@server:* --env IPTABLES_MODE=legacy@server:* --api-port 127.0.0.1:6443 --port 80:80/tcp@server:* --port 443:443/tcp@server:*
