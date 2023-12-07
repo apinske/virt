@@ -26,7 +26,7 @@ small Linux VM, ready to run containers, for macOS on ARM
 * only virtio drivers
 
 ### Userland
-* based on Alpine 3.18
+* based on Alpine 3.19
 * stripped down
 
 ### Hypervisor
