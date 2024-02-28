@@ -46,9 +46,9 @@ do {
 config.entropyDevices = [VZVirtioEntropyDeviceConfiguration()]
 
 let network = VZVirtioNetworkDeviceConfiguration()
-if let macAddressString = try? String(contentsOfFile: ".virt.mac", encoding: .utf8),
+/* if let macAddressString = try? String(contentsOfFile: ".virt.mac", encoding: .utf8),
    let macAddress = VZMACAddress(string: macAddressString.trimmingCharacters(in: .whitespacesAndNewlines)) {
-    network.macAddress = macAddress
+    // network.macAddress = macAddress
 } else {
     let macAddressString = network.macAddress.string
     NSLog("Using new MAC Address \(macAddressString)")
@@ -57,8 +57,10 @@ if let macAddressString = try? String(contentsOfFile: ".virt.mac", encoding: .ut
     } catch {
         fatalError("Virtual Machine Config Error: \(error)")
     }
-}
-network.attachment = VZNATNetworkDeviceAttachment()
+} */
+
+// network.attachment = VZNATNetworkDeviceAttachment()
+network.attachment = VZBridgedNetworkDeviceAttachment(interface: VZBridgedNetworkInterface.networkInterfaces[1])
 config.networkDevices = [network]
 
 let bootloader = VZLinuxBootLoader(kernelURL: URL(fileURLWithPath: "vmlinuz"))
