@@ -1,7 +1,9 @@
 *.img
+*.iso
 *.xcuserstate
 build/
 vmlinuz
+initrd
 *.tar.gz
 /linux
 .virt.mac

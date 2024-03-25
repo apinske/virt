@@ -39,6 +39,10 @@ do {
     let vda = try VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vda.img"), readOnly: false)
     let vdb = try VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vdb.img"), readOnly: false)
     config.storageDevices = [VZVirtioBlockDeviceConfiguration(attachment: vda), VZVirtioBlockDeviceConfiguration(attachment: vdb)]
+    if (FileManager.default.fileExists(atPath: "vdc.iso")) {
+        let vdc = try VZDiskImageStorageDeviceAttachment(url: URL(fileURLWithPath: "vdc.iso"), readOnly: true)
+        config.storageDevices += [VZVirtioBlockDeviceConfiguration(attachment: vdc)]
+    }
 } catch {
     fatalError("Virtual Machine Storage Error: \(error)")
 }
@@ -62,6 +66,9 @@ network.attachment = VZNATNetworkDeviceAttachment()
 config.networkDevices = [network]
 
 let bootloader = VZLinuxBootLoader(kernelURL: URL(fileURLWithPath: "vmlinuz"))
+if (FileManager.default.fileExists(atPath: "initrd")) {
+    bootloader.initialRamdiskURL = URL(fileURLWithPath: "initrd")
+}
 bootloader.commandLine = "console=hvc0 root=/dev/vda" + (verbose ? "" : " quiet")
 config.bootLoader = bootloader
 
