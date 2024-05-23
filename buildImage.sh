@@ -1,6 +1,6 @@
 #!/bin/sh
 if [ ! -f alpine-minirootfs.tar.gz ]; then
-    wget -O alpine-minirootfs.tar.gz https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/aarch64/alpine-minirootfs-3.19.1-aarch64.tar.gz
+    wget -O alpine-minirootfs.tar.gz https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/aarch64/alpine-minirootfs-3.20.0-aarch64.tar.gz
 fi
 
 umount mnt
@@ -10,8 +10,8 @@ mkdir mnt
 mount vda.img mnt
 cd mnt
 tar xf ../alpine-minirootfs.tar.gz
-rm -rf etc/conf.d etc/logrotate.d etc/modprobe.d etc/modules-load.d etc/network etc/opt etc/sysctl.d lib/modules-load.d
-rm etc/modules etc/udhcpd.conf etc/sysctl.conf etc/hostname etc/motd etc/issue etc/shadow
+rm -rf etc/logrotate.d etc/modprobe.d etc/modules-load.d etc/network etc/opt etc/sysctl.d etc/udhcpc lib/modules-load.d
+rm etc/modules etc/sysctl.conf etc/hostname etc/motd etc/issue etc/shadow
 cp ../etc/passwd etc/passwd
 cp ../etc/group etc/group
 cp ../etc/hosts etc/hosts
