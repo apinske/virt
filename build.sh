@@ -6,6 +6,7 @@ if [ ! -d mnt ]; then
 fi
 
 if [ ! -d linux ]; then
+    #git clone --branch linux-6.6.y --depth 1 git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
     wget -q -O linux.tar.xz https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-$(cat linux.version).tar.xz
     mkdir linux
     cd linux
