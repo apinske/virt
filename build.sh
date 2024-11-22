@@ -9,6 +9,7 @@ if [ ! -d linux ]; then
     git clone --branch linux-6.12.y --depth 1 git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
 fi
 cd linux
+git pull
 cp ../linux.config .config
 if [ ! "aarch64" = "$(uname -m)" ]; then
     echo "cross compiling on $(uname -m)"
