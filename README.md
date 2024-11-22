@@ -21,7 +21,7 @@ small Linux VM, ready to run containers, for macOS on ARM
 
 ## Components
 ### Kernel
-* based on 6.6 longterm
+* based on 6.12 longterm
 * small set of features
 * only virtio drivers
 
