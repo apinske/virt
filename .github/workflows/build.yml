@@ -17,10 +17,10 @@ jobs:
         path: virt.tar.gz
   build-tool:
     needs: build-base
-    runs-on: macos-14 #https://github.com/actions/runner-images/blob/main/images/macos/macos-14-Readme.md
+    runs-on: macos-15 #https://github.com/actions/runner-images/blob/main/images/macos/macos-15-arm64-Readme.md
     steps:
     - uses: actions/checkout@v4
-    - run: sudo xcode-select -s /Applications/Xcode_15.4.app
+    - run: sudo xcode-select -s /Applications/Xcode_16.2.app
     - run: cd virt && xcodebuild -arch arm64
     - uses: actions/download-artifact@v4
       with:
