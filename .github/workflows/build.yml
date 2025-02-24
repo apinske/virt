@@ -10,7 +10,7 @@ jobs:
       with:
         path: linux
         key: cache-${{ hashFiles('build.sh') }}
-    - run: sudo apt remove needrestart && ./build.sh && sudo ./buildImage.sh && tar czf virt.tar.gz vmlinuz vda.img
+    - run: ./build.sh && sudo ./buildImage.sh && tar czf virt.tar.gz vmlinuz vda.img
     - uses: actions/upload-artifact@v4
       with:
         name: virt
