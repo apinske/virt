@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 jobs:
   build-base:
-    runs-on: ubuntu-24.04 #https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md
+    runs-on: ubuntu-24.04-arm #https://github.com/actions/partner-runner-images/blob/main/images/arm-ubuntu-24-image.md
     steps:
     - uses: actions/checkout@v4
     - uses: actions/cache@v4
