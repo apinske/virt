@@ -1,6 +1,7 @@
 #!/bin/sh
-if [ ! -f alpine-minirootfs.tar.gz ]; then
-    wget -O alpine-minirootfs.tar.gz https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/aarch64/alpine-minirootfs-3.22.0-aarch64.tar.gz
+if [ ! -f apk.static ]; then
+    wget -O apk.static https://gitlab.alpinelinux.org/api/v4/projects/5/packages/generic/v2.14.10/aarch64/apk.static
+    chmod +x apk.static
 fi
 
 umount mnt
@@ -9,7 +10,9 @@ mkfs.ext4 vda.img
 mkdir mnt
 mount vda.img mnt
 cd mnt
-tar xf ../alpine-minirootfs.tar.gz
+mkdir -p etc/apk
+cp -r ../etc/apk etc
+sudo ../apk.static add --root . --initdb alpine-baselayout busybox apk-tools
 rm -rf etc/logrotate.d etc/modprobe.d etc/modules-load.d etc/network etc/opt etc/sysctl.d etc/udhcpc lib/modules-load.d
 rm etc/modules etc/sysctl.conf etc/hostname etc/motd etc/issue etc/shadow
 cp ../etc/passwd etc/passwd

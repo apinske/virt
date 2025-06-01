@@ -4,6 +4,6 @@
 build/
 vmlinuz
 initrd
-*.tar.gz
+apk.static
 /linux
 .virt.mac
