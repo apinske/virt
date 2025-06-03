@@ -13,8 +13,8 @@ cd mnt
 mkdir -p etc/apk
 cp -r ../etc/apk etc
 sudo ../apk.static add --root . --initdb alpine-baselayout busybox apk-tools
-rm -rf etc/logrotate.d etc/modprobe.d etc/modules-load.d etc/network etc/opt etc/sysctl.d etc/udhcpc lib/modules-load.d
-rm etc/modules etc/sysctl.conf etc/hostname etc/motd etc/issue etc/shadow
+rm -rf etc/logrotate.d etc/modprobe.d etc/modules-load.d etc/network etc/opt etc/sysctl.d etc/udhcpc usr/lib/modules-load.d lib/modules-load.d usr/lib/sysctl.d lib/sysctl.d lib/firmware media opt srv
+rm etc/modules etc/sysctl.conf etc/hostname etc/motd etc/*- etc/shadow
 cp ../etc/passwd etc/passwd
 cp ../etc/group etc/group
 cp ../etc/hosts etc/hosts
@@ -24,7 +24,5 @@ cp -Tr ../etc/init.d etc/init.d
 mkdir etc/dropbear mnt/virt
 cp -Tr ../root root
 cp ../usr/share/udhcpc/default.script usr/share/udhcpc/default.script
-rm -rf lib/sysctl.d
-rm -rf media opt srv
 cd ..
 umount mnt
