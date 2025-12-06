@@ -1,6 +1,6 @@
 #!/bin/sh
 if [ ! -f apk.static ]; then
-    wget -O apk.static https://gitlab.alpinelinux.org/api/v4/projects/5/packages/generic/v2.14.10/aarch64/apk.static
+    wget -O apk.static https://gitlab.alpinelinux.org/api/v4/projects/5/packages/generic/v3.0.1/aarch64/apk.static
     chmod +x apk.static
 fi
 
