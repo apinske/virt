@@ -6,7 +6,7 @@ if [ ! -d mnt ]; then
 fi
 
 if [ ! -d linux ]; then
-    git clone --branch linux-6.12.y --depth 1 git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+    git clone --branch linux-6.18.y --depth 1 git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
 fi
 cd linux
 git pull
